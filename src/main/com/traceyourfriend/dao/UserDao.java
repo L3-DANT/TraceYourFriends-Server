@@ -1,5 +1,7 @@
 package main.com.traceyourfriend.dao;
 
+import main.com.traceyourfriend.beans.User;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
