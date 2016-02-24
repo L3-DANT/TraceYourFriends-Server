@@ -2,32 +2,32 @@ package main.com.traceyourfriend.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 
-public class MySQLDao {
+public class  MySQLDao {
 
-    private Connection connection;
+    public static Connection conn;
+    public static MySQLDao db;
 
-    private String dbHost = null;
-    private String dbUser = null;
-    private String dbPwd = null;
-    private String dbName = null;
-
-    public MySQLDao(){
-        this.dbHost = Conn.DB_HOST;
-        this.dbUser = Conn.DB_USER;
-        this.dbPwd = Conn.DB_PWD;
-        this.dbName = Conn.DB_NAME;
+    private MySQLDao() {
+        String dbHost = "localhost";
+        String dbName = "TraceYourFriend-DB";
+        String url= "jdbc:mysql://"+ dbHost + ":3306/"+ dbName;
+        String driver = "com.mysql.jdbc.Driver";
+        String userName = "root";
+        String password = "root";
+        try {
+            Class.forName(driver).newInstance();
+            conn = DriverManager.getConnection(url,userName,password);
+        }
+        catch (Exception sqle) {
+            sqle.printStackTrace();
+        }
     }
-
-    public void setUp() throws Exception {
-        String url = "jdbc:mysql://"+this.dbHost+":3306/"+dbName;
-        Class.forName("org.mysql.Driver");
-        connection = DriverManager.getConnection(url, this.dbUser, this.dbPwd);
-    }
-
-    public void after() throws SQLException {
-        connection.close();
+    public static MySQLDao getDbCon() {
+        if ( db == null ) {
+            db = new MySQLDao();
+        }
+        return db;
     }
 
 

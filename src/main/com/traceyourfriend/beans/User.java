@@ -1,6 +1,22 @@
 package main.com.traceyourfriend.beans;
 
+
+import main.com.traceyourfriend.dao.MySQLDao;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+
+@Path("/users")
 public class User implements Comparable<User> {
+
+    MySQLDao mySQLDao = MySQLDao.getDbCon();
+
+    private final String SQL_SELECT = "SELECT name FROM users";
 
     private long id;
 
@@ -39,6 +55,19 @@ public class User implements Comparable<User> {
         this.id = id;
     }
 
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    public String message(){
+        return "<p>Bonjour<p>";
+    }
+
+    @Path("/message2")
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    public String message2(){
+        return "<p>Bonsoir<p>";
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -46,9 +75,8 @@ public class User implements Comparable<User> {
 
         User user = (User) o;
 
-        if (mail != null ? !mail.equals(user.mail) : user.mail != null) return false;
+        return !(mail != null ? !mail.equals(user.mail) : user.mail != null);
 
-        return true;
     }
 
     @Override
@@ -65,4 +93,29 @@ public class User implements Comparable<User> {
     public String toString() {
         return mail;
     }
+
+
+    @Path("/database")
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    public String nameOfUser() throws Exception {
+
+        String str;
+        String returnedString = "";
+        try{
+            PreparedStatement preparedStatement = mySQLDao.conn.prepareStatement(SQL_SELECT);
+
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                str = resultSet.getString(1);
+                returnedString = "<p>Database Status</p> " + "<p>Database name user  : " + str +"</p>";
+            }
+            preparedStatement.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return returnedString;
+    }
+
 }
