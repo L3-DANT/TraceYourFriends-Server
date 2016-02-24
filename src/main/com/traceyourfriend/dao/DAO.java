@@ -1,20 +1,19 @@
 package main.com.traceyourfriend.dao;
 
-import java.sql.SQLException;
-import java.util.List;
+import org.codehaus.jettison.json.JSONArray;
 
 public interface DAO <T>{
 
-    T add(T object) throws SQLException;
+    //T add(T object) throws SQLException;
 
-    void remove(T object)  throws SQLException;
+    //void remove(T object)  throws SQLException;
 
-    T merge(T object) throws SQLException;
+    //T merge(T object) throws SQLException;
 
-    T find(long id) throws SQLException;
+    JSONArray findWithEmail(String email) throws Exception;
 
-    T find(String name) throws SQLException;
+    JSONArray findWithName(String name) throws Exception;
 
-    List<T> findAll() throws SQLException;
+    JSONArray findAll() throws Exception;
 
 }
