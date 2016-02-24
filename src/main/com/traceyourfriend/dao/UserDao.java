@@ -1,11 +1,17 @@
 package main.com.traceyourfriend.dao;
 
+import main.com.traceyourfriend.beans.User;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class UserDao implements DAO<User> {
-    private final Connection connection;
 
     private final String SQL_INSERT_USER = "INSERT INTO users (email, password) VALUES (?, ?)";
     private final String SQL_DELETE_USER = "DELETE FROM users WHERE email = ?";
@@ -14,13 +20,9 @@ public class UserDao implements DAO<User> {
     private final String SQL_SELECT_USER_BY_EMAIL = "SELECT * FROM users WHERE email = ?";
     private final String SQL_SELECT_USER = "SELECT * FROM users";
 
-    public UserDao(Connection connection) {
-        this.connection = connection;
-    }
-
     @Override
     public User add(User object) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_USER, Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement preparedStatement = MySQLDao.conn.prepareStatement(SQL_INSERT_USER, Statement.RETURN_GENERATED_KEYS);
         preparedStatement.setString(1, object.getMail());
         preparedStatement.setString(2,object.getPassword());
 
@@ -37,7 +39,7 @@ public class UserDao implements DAO<User> {
 
     @Override
     public void remove(User object) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_USER);
+        PreparedStatement preparedStatement = MySQLDao.conn.prepareStatement(SQL_DELETE_USER);
         preparedStatement.setString(1, object.getMail());
 
         preparedStatement.execute();
@@ -47,7 +49,7 @@ public class UserDao implements DAO<User> {
 
     @Override
     public User merge(User object) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(SQL_UPDATE_USER);
+        PreparedStatement preparedStatement = MySQLDao.conn.prepareStatement(SQL_UPDATE_USER);
         preparedStatement.setString(1, object.getMail());
         preparedStatement.setString(2, object.getPassword());
         preparedStatement.setLong(3, object.getId());
@@ -61,7 +63,7 @@ public class UserDao implements DAO<User> {
     public User find(long id) throws SQLException {
 
         User user = new User();
-        PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_USER_BY_ID);
+        PreparedStatement preparedStatement = MySQLDao.conn.prepareStatement(SQL_SELECT_USER_BY_ID);
         preparedStatement.setLong(1, id);
         ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -81,7 +83,7 @@ public class UserDao implements DAO<User> {
     @Override
     public User find(String email) throws SQLException {
         User user = new User();
-        PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_USER_BY_EMAIL);
+        PreparedStatement preparedStatement = MySQLDao.conn.prepareStatement(SQL_SELECT_USER_BY_EMAIL);
         preparedStatement.setString(1, email);
 
         ResultSet resultSet = preparedStatement.executeQuery();
@@ -103,7 +105,7 @@ public class UserDao implements DAO<User> {
     public List<User> findAll() throws SQLException {
 
         List<User> users = new ArrayList<>();
-        PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_USER);
+        PreparedStatement preparedStatement = MySQLDao.conn.prepareStatement(SQL_SELECT_USER);
 
         ResultSet resultSet = preparedStatement.executeQuery();
 
