@@ -1,6 +1,9 @@
 package main.com.traceyourfriend.dao;
 
-import org.codehaus.jettison.json.JSONArray;
+import main.com.traceyourfriend.beans.User;
+
+import java.sql.SQLException;
+import java.util.List;
 
 public interface DAO <T>{
 
@@ -10,10 +13,8 @@ public interface DAO <T>{
 
     //T merge(T object) throws SQLException;
 
-    JSONArray findWithEmail(String email) throws Exception;
+    User findWithEmail(String email) throws SQLException;
 
-    JSONArray findWithName(String name) throws Exception;
-
-    JSONArray findAll() throws Exception;
+    List<User> findAll() throws SQLException;
 
 }
