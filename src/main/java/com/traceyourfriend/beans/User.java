@@ -1,4 +1,4 @@
-package main.com.traceyourfriend.beans;
+package com.traceyourfriend.beans;
 
 public class User implements Comparable<User> {
     private long id;

@@ -1,6 +1,6 @@
-package main.com.traceyourfriend.dao;
+package com.traceyourfriend.dao;
 
-import main.com.traceyourfriend.beans.User;
+import com.traceyourfriend.beans.User;
 
 import java.sql.SQLException;
 import java.util.List;

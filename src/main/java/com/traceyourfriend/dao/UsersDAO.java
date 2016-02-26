@@ -1,7 +1,7 @@
-package main.com.traceyourfriend.dao;
+package com.traceyourfriend.dao;
 
 
-import main.com.traceyourfriend.beans.User;
+import com.traceyourfriend.beans.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

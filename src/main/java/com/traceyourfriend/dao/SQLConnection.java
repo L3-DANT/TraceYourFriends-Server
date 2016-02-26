@@ -1,4 +1,4 @@
-package main.com.traceyourfriend.dao;
+package com.traceyourfriend.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

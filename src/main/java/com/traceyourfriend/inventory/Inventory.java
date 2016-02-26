@@ -1,8 +1,8 @@
-package main.com.traceyourfriend.inventory;
+package com.traceyourfriend.inventory;
 
 import com.google.gson.Gson;
-import main.com.traceyourfriend.beans.User;
-import main.com.traceyourfriend.dao.UsersDAO;
+import com.traceyourfriend.beans.User;
+import com.traceyourfriend.dao.UsersDAO;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.*;
