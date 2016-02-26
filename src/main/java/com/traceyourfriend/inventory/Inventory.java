@@ -52,7 +52,7 @@ public class Inventory {
      * @return - json array results list from the database
      * @throws Exception
      */
-    @Path("/{email}")
+    @Path("searchMail/{email}")
     @GET
     public String findWithEmail(@PathParam("email") String email) throws SQLException {
 		if (StringUtils.isEmpty(email)) {
@@ -77,7 +77,7 @@ public class Inventory {
 	 * @return - json array results list from the database
 	 * @throws Exception
 	 */
-	@Path("/{name}")
+	@Path("searchName/{name}")
 	@GET
 	public String findWithName(@PathParam("name") String name) throws SQLException {
 		if (StringUtils.isEmpty(name)) {
