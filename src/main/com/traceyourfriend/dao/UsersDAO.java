@@ -1,12 +1,13 @@
 package main.com.traceyourfriend.dao;
 
 
-import main.com.traceyourfriend.util.ToJSON;
-import org.codehaus.jettison.json.JSONArray;
+import main.com.traceyourfriend.beans.User;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -21,9 +22,8 @@ import java.sql.SQLException;
 
 public class UsersDAO implements DAO{
 
-    private final String SQL_SELECT_USER_BY_EMAIL = "SELECT * FROM users WHERE email = ?";
-    private final String SQL_SELECT_USER_BY_NAME = "SELECT * FROM users WHERE name = ?";
-    private final String SQL_SELECT_USER = "SELECT * FROM users";
+    private static final String SQL_SELECT_USER_BY_EMAIL = "SELECT * FROM users WHERE email = ?";
+    private static final String SQL_SELECT_USER = "SELECT * FROM users";
 
     MySQLDao mySQLDao = MySQLDao.getDbCon();
 
@@ -39,70 +39,17 @@ public class UsersDAO implements DAO{
      */
 
     @Override
-    public JSONArray findWithEmail(String email) throws Exception {
-
-
-        ToJSON converter = new ToJSON();
-        JSONArray json = new JSONArray();
-
-        try{
-            PreparedStatement preparedStatement = mySQLDao.conn.prepareStatement(SQL_SELECT_USER_BY_EMAIL);
+    public User findWithEmail(String email) throws SQLException {
+        try (PreparedStatement preparedStatement = mySQLDao.conn.prepareStatement(SQL_SELECT_USER_BY_EMAIL)){
             preparedStatement.setString(1, email); //protect against sql injection
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            json = converter.toJSONArray(resultSet);
-            preparedStatement.close();
-
-        }catch(SQLException sqlError) {
-            sqlError.printStackTrace();
-            return json;
+            try(ResultSet resultSet = preparedStatement.executeQuery()) {
+				if (resultSet.next()) {
+					return convertFromResultSet(resultSet);
+				}
+			}
         }
-        catch(Exception e) {
-            e.printStackTrace();
-            return json;
-        }
-
-        return json;
-
+		return null;
     }
-
-    /**
-     * This method will search for a specific users with via his name from the users table.
-     * By using prepareStatement and the ?, we are protecting against sql injection
-     *
-     * Never add parameter straight into the prepareStatement
-     *
-     * @param name - product brand
-     * @return - json array of the results from the database
-     * @throws Exception
-     */
-
-    @Override
-    public JSONArray findWithName(String name) throws Exception {
-
-        ToJSON converter = new ToJSON();
-        JSONArray json = new JSONArray();
-
-        try{
-            PreparedStatement preparedStatement = mySQLDao.conn.prepareStatement(SQL_SELECT_USER_BY_NAME);
-            preparedStatement.setString(1, name); //protect against sql injection
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            json = converter.toJSONArray(resultSet);
-            preparedStatement.close();
-
-        }catch(SQLException sqlError) {
-            sqlError.printStackTrace();
-            return json;
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-            return json;
-        }
-
-        return json;
-    }
-
 
     /**
      * This method will return all users.
@@ -112,29 +59,23 @@ public class UsersDAO implements DAO{
      */
 
     @Override
-    public JSONArray findAll() throws Exception {
-
-        MySQLDao mySQLDao = MySQLDao.getDbCon();
-        ToJSON converter = new ToJSON();
-        JSONArray json = new JSONArray();
-
-        try{
-            PreparedStatement preparedStatement = mySQLDao.conn.prepareStatement(SQL_SELECT_USER);
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-            json = converter.toJSONArray(resultSet);
-            preparedStatement.close();
-
-        }catch(SQLException sqlError) {
-            sqlError.printStackTrace();
-            return json;
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-            return json;
-        }
-
-        return json;
-
+    public List<User> findAll() throws SQLException {
+		List<User> users = new ArrayList<>();
+		try (PreparedStatement preparedStatement = mySQLDao.conn.prepareStatement(SQL_SELECT_USER)) {
+			try(ResultSet resultSet = preparedStatement.executeQuery()) {
+				while (resultSet.next()) {
+					users.add(convertFromResultSet(resultSet));
+				}
+			}
+		}
+		return users;
     }
+
+
+
+	private User convertFromResultSet(ResultSet resultSet) throws SQLException {
+		User user = new User(resultSet.getString(2), resultSet.getString(3));
+		user.setId(resultSet.getInt(1));
+		return user;
+	}
 }
