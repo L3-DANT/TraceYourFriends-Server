@@ -64,4 +64,29 @@ public class Inventory {
 		}
 		return new Gson().toJson(user);
     }
+
+	/**
+	 * This method will return the specific name of user is looking for.
+	 * It is very similar to the method findAll except this method uses the
+	 * PathParam to bring in the data.
+	 *
+	 * Example would be:
+	 * http://localhost:8080/TraceYourFriends/api/users/aniss
+	 *
+	 * @param name - product email name
+	 * @return - json array results list from the database
+	 * @throws Exception
+	 */
+	@Path("/{name}")
+	@GET
+	public String findWithName(@PathParam("name") String name) throws SQLException {
+		if (StringUtils.isEmpty(name)) {
+			throw new NotFoundException();
+		}
+		User user = dao.findWithName(name);
+		if (user == null) {
+			throw new NotFoundException();
+		}
+		return new Gson().toJson(user);
+	}
 }

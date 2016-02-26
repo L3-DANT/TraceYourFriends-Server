@@ -24,6 +24,7 @@ import java.util.List;
 public class UsersDAO implements DAO{
 
     private static final String SQL_SELECT_USER_BY_EMAIL = "SELECT * FROM users WHERE email = ?";
+    private static final String SQL_SELECT_USER_BY_NAME = "SELECT * FROM users WHERE name = ?";
     private static final String SQL_SELECT_USER = "SELECT * FROM users";
 
     private final Connection connection = SQLConnection.db.getDbCon();
@@ -52,7 +53,32 @@ public class UsersDAO implements DAO{
 		return null;
     }
 
-    /**
+
+	/**
+	 * This method will search for a specific users with via his name from the users table.
+	 * By using prepareStatement and the ?, we are protecting against sql injection
+	 *
+	 * Never add parameter straight into the prepareStatement
+	 *
+	 * @param name - product brand
+	 * @return - json array of the results from the database
+	 * @throws Exception
+	 */
+
+	@Override
+	public User findWithName(String name) throws SQLException {
+		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_USER_BY_NAME)){
+			preparedStatement.setString(1, name); //protect against sql injection
+			try(ResultSet resultSet = preparedStatement.executeQuery()) {
+				if (resultSet.next()) {
+					return convertFromResultSet(resultSet);
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
      * This method will return all users.
      *
      * @return - all users in json format

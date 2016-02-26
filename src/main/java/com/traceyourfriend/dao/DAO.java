@@ -15,6 +15,8 @@ public interface DAO <T>{
 
     User findWithEmail(String email) throws SQLException;
 
+    User findWithName(String name) throws SQLException;
+
     List<User> findAll() throws SQLException;
 
 }

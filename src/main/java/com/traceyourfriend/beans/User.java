@@ -3,6 +3,8 @@ package com.traceyourfriend.beans;
 public class User implements Comparable<User> {
     private long id;
 
+    private String name;
+
     private String mail;
 
     private String password;
