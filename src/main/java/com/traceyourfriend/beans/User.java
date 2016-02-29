@@ -11,9 +11,18 @@ public class User implements Comparable<User> {
 
     public User(){}
 
-    public User(String mail, String password) {
+    public User(String name, String mail, String password) {
+        this.name = name;
         this.mail = mail;
         this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getMail() {
@@ -65,5 +74,6 @@ public class User implements Comparable<User> {
     public String toString() {
         return mail;
     }
+
 
 }

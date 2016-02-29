@@ -3,12 +3,13 @@ package com.traceyourfriend.dao;
 
 import com.traceyourfriend.beans.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 
 /**
@@ -25,17 +26,53 @@ public class UsersDAO implements DAO{
 
     private static final String SQL_SELECT_USER_BY_EMAIL = "SELECT * FROM users WHERE email = ?";
     private static final String SQL_SELECT_USER_BY_NAME = "SELECT * FROM users WHERE name = ?";
+	private static final String SQL_INSERT_USER = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
     private static final String SQL_SELECT_USER = "SELECT * FROM users";
 
     private final Connection connection = SQLConnection.db.getDbCon();
 
-    /**
+
+	/**
+	 * This method will create a users in the users table.
+	 * By using prepareStatement and the ?, we are protecting against sql injection
+	 *
+	 * Never add parameter straight into the prepareStatement
+	 *
+	 * @param name - a user
+	 * @param email - a user
+	 * @param password - a user
+	 * @return - return the user created
+	 * @throws Exception
+	 */
+
+	@Override
+	public int add(String name, String email, String password) throws SQLException {
+		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_USER)){
+
+			/*
+			 * Important: The primary key on users table will auto increment.
+			 * 		That means the Pid column does not need to be apart of the
+			 * 		SQL insert query below.
+			 */
+			preparedStatement.setString(1, name); //protect against sql injection
+			preparedStatement.setString(1, email); //protect against sql injection
+			preparedStatement.setString(1, password); //protect against sql injection
+
+			preparedStatement.executeUpdate();
+
+			return 200;
+		}catch (Exception e){
+			return 500;
+		}
+	}
+
+	/**
      * This method will search for a specific users with via his email from the users table.
      * By using prepareStatement and the ?, we are protecting against sql injection
      *
      * Never add parameter straight into the prepareStatement
      *
-     * @param email - product brand
+     * @param email - email user
      * @return - json array of the results from the database
      * @throws Exception
      */
@@ -101,7 +138,7 @@ public class UsersDAO implements DAO{
 
 
 	private User convertFromResultSet(ResultSet resultSet) throws SQLException {
-		User user = new User(resultSet.getString(2), resultSet.getString(3));
+		User user = new User(resultSet.getString(2), resultSet.getString(3), resultSet.getString(4));
 		user.setId(resultSet.getInt(1));
 		return user;
 	}
