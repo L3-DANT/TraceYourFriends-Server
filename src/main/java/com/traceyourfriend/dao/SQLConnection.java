@@ -19,7 +19,7 @@ public class SQLConnection {
 	private void initConnection() {
 		String dbHost = "localhost";
 		String dbName = "TraceYourFriend-DB";
-		String url= "jdbc:mysql://"+ dbHost + ":3306/"+ dbName;
+		String url= "jdbc:mysql://"+ dbHost + ":8889/"+ dbName;
 		String driver = "com.mysql.jdbc.Driver";
 		String userName = "root";
 		String password = "root";
@@ -31,6 +31,4 @@ public class SQLConnection {
 			sql.printStackTrace();
 		}
 	}
-
-
 }

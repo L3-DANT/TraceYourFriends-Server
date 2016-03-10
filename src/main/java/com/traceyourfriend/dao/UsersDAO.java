@@ -45,15 +45,17 @@ public class UsersDAO implements DAO{
 	 * @throws Exception
 	 */
 
+	/*
 	@Override
+
 	public int add(String name, String email, String password) throws SQLException {
 		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_USER)){
 
-			/*
+
 			 * Important: The primary key on users table will auto increment.
 			 * 		That means the Pid column does not need to be apart of the
 			 * 		SQL insert query below.
-			 */
+
 			preparedStatement.setString(1, name); //protect against sql injection
 			preparedStatement.setString(1, email); //protect against sql injection
 			preparedStatement.setString(1, password); //protect against sql injection
@@ -65,7 +67,7 @@ public class UsersDAO implements DAO{
 			return 500;
 		}
 	}
-
+		*/
 	/**
      * This method will search for a specific users with via his email from the users table.
      * By using prepareStatement and the ?, we are protecting against sql injection
