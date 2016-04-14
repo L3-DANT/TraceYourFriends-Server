@@ -1,15 +1,14 @@
 package com.traceyourfriend.inventory;
 
 import com.google.gson.Gson;
-import com.traceyourfriend.beans.User;
-import com.traceyourfriend.dao.UsersDAO;
+
+import com.pusher.rest.Pusher;
+
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 /**
@@ -21,28 +20,15 @@ import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 @Produces(MediaType.APPLICATION_JSON)
 public class CoorInventory {
 
-    /**
-     * This methode will return the actual coordinate of a user from the name
-     * parameter.
-     * <p/>
-     * http://localhost:8080/TraceYourFriends/api/coor/getCoorWithName/romann
-     *
-     * @param name - user Name
-     * @return - json string with coordinate
-     */
     @GET
-    @Path("/getCoorWithName/{name}")
-    public String GetCoorWithName(@PathParam("name") final String name) throws SQLException {
-        UsersDAO uDao = new UsersDAO();
-        String coor = "";
-        List<User> lUser = uDao.findAll();
+    @Path("Connexion/{login}/{mdp}")
+    public String Connexion(@PathParam("login") final String login, @PathParam("mdp") final String mdp) throws SQLException
+    {
 
-        for (User u : lUser){
-            if(name.equals(u.getName())){
-                coor = u.getCoor();
-            }
-        }
+        String url = "http://"+"272ee489a902c2f6a96f"+":"+"efb0b30a6239f96d1e95"+"@api.pusherapp.com:80/apps/"+"195526";
+        Pusher pusher = new Pusher(url);
+        pusher.trigger("test_channel", "my_event", Collections.singletonMap("message", "Hello World"));
 
-        return new Gson().toJson(coor);
+        return new Gson().toJson("");
     }
 }
