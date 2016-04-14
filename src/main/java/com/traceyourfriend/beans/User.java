@@ -1,5 +1,8 @@
 package com.traceyourfriend.beans;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
+
 public class User implements Comparable<User> {
     private long id;
 
@@ -9,12 +12,27 @@ public class User implements Comparable<User> {
 
     private String password;
 
+    private String coorX;
+
+    private String coorY;
+
+    private ArrayList<User> contacts;
+
     public User(){}
 
     public User(String name, String mail, String password) {
         this.name = name;
         this.mail = mail;
         this.password = password;
+    }
+
+    public User(String name, String mail, String password, String coorX, String coorY, ArrayList<User> contacts) {
+        this.name = name;
+        this.mail = mail;
+        this.password = password;
+        this.coorX = coorX;
+        this.coorY = coorY;
+        this.contacts = contacts;
     }
 
     public String getName() {
@@ -48,6 +66,23 @@ public class User implements Comparable<User> {
     public void setId(long id) {
         this.id = id;
     }
+
+    public Hashtable<String,String> getCoor(){
+        Hashtable<String,String> coor = new Hashtable<>();
+
+        coor.put("coorX", this.coorX);
+        coor.put("coorY", this.coorY);
+
+        return coor;
+    }
+
+    public void setCoorX(String coorNew){this.coorX = coorNew;}
+
+    public void setCoorY(String coorNew){this.coorY = coorNew;}
+
+    public ArrayList<User> getContacts(){return contacts;}
+
+    public void setContacts(ArrayList<User> contacts){this.contacts = contacts;}
 
     @Override
     public boolean equals(Object o) {

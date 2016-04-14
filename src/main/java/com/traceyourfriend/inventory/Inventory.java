@@ -1,6 +1,7 @@
 package com.traceyourfriend.inventory;
 
 import com.google.gson.Gson;
+import com.pusher.rest.Pusher;
 import com.traceyourfriend.beans.User;
 import com.traceyourfriend.dao.UsersDAO;
 import org.apache.commons.lang3.StringUtils;
@@ -8,6 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Hashtable;
 import java.util.List;
 
 
@@ -88,5 +91,30 @@ public class Inventory {
 			throw new NotFoundException();
 		}
 		return new Gson().toJson(user);
+	}
+
+	@GET
+	@Path("Coor/{name}/{coorX}/{coorY}")
+	public void Coor(@PathParam("login") final String name, @PathParam("coorX") final String coorX, @PathParam("coorY") final String coorY) throws SQLException {
+		User u = null;
+
+		u = dao.findWithName(name);
+		u.setCoorX(coorX);
+		u.setCoorY(coorY);
+
+		String url = "http://" + "272ee489a902c2f6a96f" + ":" + "efb0b30a6239f96d1e95" + "@api.pusherapp.com:80/apps/" + "195526";
+		Pusher pusher = new Pusher(url);
+		pusher.trigger(u.getName(), "coor", Collections.singletonMap(u.getName(),u.getCoor()));
+	}
+
+	@POST
+	@Path("Inscription/")
+	@Consumes("application/json")
+	public String Inscription(String message) throws SQLException{
+		User u = new Gson().fromJson(message, User.class);
+
+		Boolean inscr = dao.CreateUser(u);
+
+		return new Gson().toJson(inscr.toString());
 	}
 }

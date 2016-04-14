@@ -144,4 +144,18 @@ public class UsersDAO implements DAO{
 		user.setId(resultSet.getInt(1));
 		return user;
 	}
+
+	public Boolean CreateUser(User u) throws SQLException {
+		boolean res = false;
+
+		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_USER)) {
+			preparedStatement.setString(1, u.getName());
+			preparedStatement.setString(2, u.getMail());
+			preparedStatement.setString(3, u.getPassword());
+
+			res = preparedStatement.execute();
+		}
+
+		return res;
+	}
 }
