@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface DAO <T>{
 
-    //int add(String name, String email, String password) throws SQLException;
+    int add(User user) throws SQLException;
 
     //void remove(T object)  throws SQLException;
 
@@ -19,4 +19,5 @@ public interface DAO <T>{
 
     List<User> findAll() throws SQLException;
 
+    User search(String email) throws SQLException;
 }

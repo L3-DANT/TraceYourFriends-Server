@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.pusher.rest.Pusher;
 import com.traceyourfriend.beans.User;
 import com.traceyourfriend.dao.UsersDAO;
+import com.traceyourfriend.utils.HashUser;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.*;
@@ -108,13 +109,27 @@ public class Inventory {
 	}
 
 	@POST
-	@Path("Inscription/")
-	@Consumes("application/json")
+	@Path("inscription")
 	public String Inscription(String message) throws SQLException{
 		User u = new Gson().fromJson(message, User.class);
+		int inscr = dao.add(u);
+		return new Gson().toJson(inscr);
 
-		Boolean inscr = dao.CreateUser(u);
+	}
 
-		return new Gson().toJson(inscr.toString());
+	@POST
+	@Path("connexion")
+	public String Connexion(String message) throws SQLException{
+		HashUser h = HashUser.getInstance();
+		User u = new Gson().fromJson(message, User.class);
+		u = h.searchHash(u.getMail());
+		int i ;
+		if (u != null){
+			i = 200;
+		}else{
+			i = 500;
+		}
+		return new Gson().toJson(i);
+
 	}
 }
