@@ -1,11 +1,15 @@
 package com.traceyourfriend.dao;
 
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
+import com.mongodb.util.JSON;
 import com.traceyourfriend.beans.User;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
+import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,43 +35,83 @@ public class UsersDAO implements DAO{
 
     private final Connection connection = SQLConnection.db.getDbCon();
 
-
 	/**
 	 * This method will create a users in the users table.
 	 * By using prepareStatement and the ?, we are protecting against sql injection
 	 *
 	 * Never add parameter straight into the prepareStatement
 	 *
-	 * @param name - a user
-	 * @param email - a user
-	 * @param password - a user
+	 * @param user - a user
 	 * @return - return the user created
 	 * @throws Exception
 	 */
 
-	/*
 	@Override
-
-	public int add(String name, String email, String password) throws SQLException {
-		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_USER)){
-
-
-			 * Important: The primary key on users table will auto increment.
+	public int add(User user) throws SQLException {
+		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_USER, Statement.RETURN_GENERATED_KEYS)){
+			/**
+			 *	Important: The primary key on users table will auto increment.
 			 * 		That means the Pid column does not need to be apart of the
 			 * 		SQL insert query below.
-
-			preparedStatement.setString(1, name); //protect against sql injection
-			preparedStatement.setString(1, email); //protect against sql injection
-			preparedStatement.setString(1, password); //protect against sql injection
-
-			preparedStatement.executeUpdate();
-
+			 */
+			preparedStatement.setString(1, user.getName()); //protect against sql injection
+			preparedStatement.setString(2, user.getMail()); //protect against sql injection
+			preparedStatement.setString(3, user.getPassword()); //protect against sql injection
+			preparedStatement.execute();
+			ResultSet resultSet = preparedStatement.getGeneratedKeys();
+			if (resultSet.next()){
+				user.setId(resultSet.getLong(1));
+			}
+			resultSet.close();
+			preparedStatement.close();
 			return 200;
-		}catch (Exception e){
+		}catch (SQLException e){
+			e.printStackTrace();
 			return 500;
 		}
 	}
-		*/
+
+	@Override
+	public User search(String email) throws SQLException {
+		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_USER_BY_EMAIL)){
+			preparedStatement.setString(1, email); //protect against sql injection
+			ResultSet resultSet = preparedStatement.executeQuery();
+			System.out.println("toto111");
+			/**CA NE MARCHE PAS .NEXT() **/
+			if (resultSet.next() /*&& resultSet.getString(3).equals(u.getPassword())*/){
+				System.out.println("toto");
+				User u = convertFromResultSet(resultSet);
+				System.out.println("toto");
+				preparedStatement.close();
+				resultSet.close();
+				return u;
+			}else {
+				/*try (PreparedStatement preparedStatement1 = connection.prepareStatement(SQL_SELECT_USER_BY_NAME)) {
+					preparedStatement1.setString(1, u.getMail()); //protect against sql injection
+					ResultSet resultSet1 = preparedStatement1.executeQuery();
+					if (resultSet1.next() /*&& resultSet1.getString(3).equals(u.getPassword())) {
+						preparedStatement1.close();
+						resultSet1.close();
+						return 200;
+					} else {
+						resultSet.close();
+						resultSet1.close();
+						preparedStatement.close();
+						preparedStatement1.close();
+						return 400;
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+					return 600;
+				}*/
+				System.out.println("toto NULL");
+				return null;
+			}
+		}catch (SQLException e){
+			e.printStackTrace();
+			return null;
+		}
+	}
 	/**
      * This method will search for a specific users with via his email from the users table.
      * By using prepareStatement and the ?, we are protecting against sql injection
@@ -122,7 +166,7 @@ public class UsersDAO implements DAO{
      *
      * @return - all users in json format
      * @throws Exception
-     */
+	 */
 
     @Override
     public List<User> findAll() throws SQLException {
@@ -145,17 +189,5 @@ public class UsersDAO implements DAO{
 		return user;
 	}
 
-	public Boolean CreateUser(User u) throws SQLException {
-		boolean res = false;
 
-		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_USER)) {
-			preparedStatement.setString(1, u.getName());
-			preparedStatement.setString(2, u.getMail());
-			preparedStatement.setString(3, u.getPassword());
-
-			res = preparedStatement.execute();
-		}
-
-		return res;
-	}
 }

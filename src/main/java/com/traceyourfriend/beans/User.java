@@ -26,6 +26,10 @@ public class User implements Comparable<User> {
         this.password = password;
     }
 
+    public User(String mail, String password) {
+        this("",mail,password);
+    }
+
     public User(String name, String mail, String password, String coorX, String coorY, ArrayList<User> contacts) {
         this.name = name;
         this.mail = mail;
