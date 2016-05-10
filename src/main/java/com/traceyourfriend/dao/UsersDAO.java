@@ -1,19 +1,11 @@
 package com.traceyourfriend.dao;
 
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.util.JSON;
 import com.traceyourfriend.beans.User;
 
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
-import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 
 /**
@@ -71,71 +63,49 @@ public class UsersDAO implements DAO{
 		}
 	}
 
+	/**
+	 * This method will search for a specific users with via his email from the users table.
+	 * By using prepareStatement and the ?, we are protecting against sql injection
+	 *
+	 * Never add parameter straight into the prepareStatement
+	 *
+	 * @param emailOrName - email user
+	 * @return - json array of the results from the database
+	 * @throws Exception
+	 */
+
 	@Override
-	public User search(String email) throws SQLException {
-		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_USER_BY_EMAIL)){
-			preparedStatement.setString(1, email); //protect against sql injection
+	public User search(String emailOrName) throws SQLException {
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_USER_BY_EMAIL);
+			preparedStatement.setString(1, emailOrName); //protect against sql injection
 			ResultSet resultSet = preparedStatement.executeQuery();
-			System.out.println("toto111");
-			/**CA NE MARCHE PAS .NEXT() **/
-			if (resultSet.next() /*&& resultSet.getString(3).equals(u.getPassword())*/){
-				System.out.println("toto");
-				User u = convertFromResultSet(resultSet);
-				System.out.println("toto");
-				preparedStatement.close();
-				resultSet.close();
-				return u;
-			}else {
-				/*try (PreparedStatement preparedStatement1 = connection.prepareStatement(SQL_SELECT_USER_BY_NAME)) {
-					preparedStatement1.setString(1, u.getMail()); //protect against sql injection
-					ResultSet resultSet1 = preparedStatement1.executeQuery();
-					if (resultSet1.next() /*&& resultSet1.getString(3).equals(u.getPassword())) {
-						preparedStatement1.close();
-						resultSet1.close();
-						return 200;
-					} else {
-						resultSet.close();
-						resultSet1.close();
-						preparedStatement.close();
-						preparedStatement1.close();
-						return 400;
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return 600;
-				}*/
-				System.out.println("toto NULL");
+			if (resultSet.next()){
+				return resultNext(resultSet, preparedStatement);
+			}
+			PreparedStatement preparedStatement1 = connection.prepareStatement(SQL_SELECT_USER_BY_NAME);
+			preparedStatement1.setString(1, emailOrName); //protect against sql injection
+			ResultSet resultSet1 = preparedStatement1.executeQuery();
+			if (resultSet1.next()){
+				return resultNext(resultSet1, preparedStatement1);
+			}
+			resultSet.close();
+			resultSet1.close();
+			preparedStatement.close();
+			preparedStatement1.close();
+			return null;
+			} catch (SQLException e) {
+				e.printStackTrace();
 				return null;
 			}
-		}catch (SQLException e){
-			e.printStackTrace();
-			return null;
-		}
 	}
-	/**
-     * This method will search for a specific users with via his email from the users table.
-     * By using prepareStatement and the ?, we are protecting against sql injection
-     *
-     * Never add parameter straight into the prepareStatement
-     *
-     * @param email - email user
-     * @return - json array of the results from the database
-     * @throws Exception
-     */
 
-    @Override
-    public User findWithEmail(String email) throws SQLException {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_USER_BY_EMAIL)){
-            preparedStatement.setString(1, email); //protect against sql injection
-            try(ResultSet resultSet = preparedStatement.executeQuery()) {
-				if (resultSet.next()) {
-					return convertFromResultSet(resultSet);
-				}
-			}
-        }
-		return null;
-    }
-
+	public User resultNext(ResultSet resultSet, PreparedStatement preparedStatement) throws SQLException{
+		User u = convertFromResultSet(resultSet);
+		preparedStatement.close();
+		resultSet.close();
+		return u;
+	}
 
 	/**
 	 * This method will search for a specific users with via his name from the users table.

@@ -11,6 +11,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
@@ -45,30 +46,6 @@ public class Inventory {
 		return new Gson().toJson(users);
 	}
 
-	/**
-	 * This method will return the specific email of user is looking for.
-	 * It is very similar to the method findAll except this method uses the
-	 * PathParam to bring in the data.
-	 * <p/>
-	 * Example would be:
-	 * http://localhost:8080/TraceYourFriends/api/users/searchMail/aniss.cherkaoui@gmail.com
-	 *
-	 * @param email - product email user
-	 * @return - json array results list from the database
-	 * @throws Exception
-	 */
-	@Path("searchMail/{email}")
-	@GET
-	public String findWithEmail(@PathParam("email") String email) throws SQLException {
-		if (StringUtils.isEmpty(email)) {
-			throw new NotFoundException();
-		}
-		User user = dao.findWithEmail(email);
-		if (user == null) {
-			throw new NotFoundException();
-		}
-		return new Gson().toJson(user);
-	}
 
 	/**
 	 * This method will return the specific name of user is looking for.
@@ -117,10 +94,8 @@ public class Inventory {
 	@Path("inscription")
 	public String Inscription(String message) throws SQLException{
 		User u = new Gson().fromJson(message, User.class);
-		// This is better to send the user instead of a code.
-		// The code that you want to send is the HTTP status code
-		// So either you use a 200 with a content / 403 / 404
-		return new Gson().toJson(u);
+		int inscr = dao.add(u);
+		return new Gson().toJson(inscr);
 
 	}
 
@@ -129,15 +104,38 @@ public class Inventory {
 	public String Connexion(String message) throws SQLException{
 		HashUser h = HashUser.getInstance();
 		User u = new Gson().fromJson(message, User.class);
-		u = h.searchHash(u.getMail());
-		if (u == null) {
-			// The user doesn't exist, we can't allow that
-			throw new ForbiddenException();
+		User user = h.searchHash(u.getMail());
+		int cone;
+		if (user != null && u.getPassword().equals(user.getPassword())) {
+			cone = 200;
+		}else{
+			cone = 500;
 		}
-		// This is better to send the user instead of a code.
-		// The code that you want to send is the HTTP status code
-		// So either you use a 200 with a content / 403 / 404
-		return new Gson().toJson(u);
+		return new Gson().toJson(cone);
 
+	}
+
+	@POST
+	@Path("rechercheContact")
+	public String rechercheContact(String recherche){
+		HashUser h = HashUser.getInstance();
+		ArrayList<String> listContact = h.searchListContacts(new Gson().fromJson(recherche, String.class));
+
+		return new Gson().toJson(listContact.toString());
+	}
+
+	@POST
+	@Path("ajoutAmis")
+	public String ajoutAmis(String message) throws SQLException{
+		HashUser h = HashUser.getInstance();
+		String name = new Gson().fromJson("name", String.class);
+		String nameAmi = new Gson().fromJson("nameAmi", String.class);
+		User user = h.searchHash(name);
+		User userAmi = h.searchHash(nameAmi);
+		if (!user.estAmi(userAmi.getName())){
+			userAmi.getDemandesAmi().add(name);
+			return "200";
+		}
+		return "500";
 	}
 }
