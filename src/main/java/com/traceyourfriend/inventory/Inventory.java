@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Hashtable;
@@ -96,24 +97,30 @@ public class Inventory {
 
 	@GET
 	@Path("Coor/{name}/{coorX}/{coorY}")
-	public void Coor(@PathParam("login") final String name, @PathParam("coorX") final String coorX, @PathParam("coorY") final String coorY) throws SQLException {
-		User u = null;
-
-		u = dao.findWithName(name);
+	public Response Coor(@PathParam("name") final String name, @PathParam("coorX") final String coorX, @PathParam("coorY") final String coorY) throws SQLException {
+		User u = dao.findWithName(name);
+		if (u == null) {
+			throw new NotFoundException();
+		}
 		u.setCoorX(coorX);
 		u.setCoorY(coorY);
 
 		String url = "http://" + "272ee489a902c2f6a96f" + ":" + "efb0b30a6239f96d1e95" + "@api.pusherapp.com:80/apps/" + "195526";
 		Pusher pusher = new Pusher(url);
 		pusher.trigger(u.getName(), "coor", Collections.singletonMap(u.getName(),u.getCoor()));
+		// Never returns nothing because your server will have to response something very basic
+		// You have a lot of warnings on some server for this kind of error.
+		return Response.noContent().build();
 	}
 
 	@POST
 	@Path("inscription")
 	public String Inscription(String message) throws SQLException{
 		User u = new Gson().fromJson(message, User.class);
-		int inscr = dao.add(u);
-		return new Gson().toJson(inscr);
+		// This is better to send the user instead of a code.
+		// The code that you want to send is the HTTP status code
+		// So either you use a 200 with a content / 403 / 404
+		return new Gson().toJson(u);
 
 	}
 
@@ -123,13 +130,14 @@ public class Inventory {
 		HashUser h = HashUser.getInstance();
 		User u = new Gson().fromJson(message, User.class);
 		u = h.searchHash(u.getMail());
-		int i ;
-		if (u != null){
-			i = 200;
-		}else{
-			i = 500;
+		if (u == null) {
+			// The user doesn't exist, we can't allow that
+			throw new ForbiddenException();
 		}
-		return new Gson().toJson(i);
+		// This is better to send the user instead of a code.
+		// The code that you want to send is the HTTP status code
+		// So either you use a 200 with a content / 403 / 404
+		return new Gson().toJson(u);
 
 	}
 }

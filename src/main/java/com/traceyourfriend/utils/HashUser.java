@@ -6,46 +6,33 @@ import com.traceyourfriend.dao.UsersDAO;
 
 import java.sql.SQLException;
 import java.util.Hashtable;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class HashUser {
 
-    private Hashtable <String, User> users;
+    private final ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();;
     private final UsersDAO dao = new UsersDAO();
 
     /** Constructeur privé */
     private HashUser(){
-        this.users = new Hashtable<>();
     }
 
     /** Instance unique non préinitialisée */
-    private static HashUser INSTANCE = null;
+    public static final HashUser INSTANCE = new HashUser();
 
-    /** Point d'accès pour l'instance unique du singleton */
-    public static HashUser getInstance(){
-        if (INSTANCE == null){
-            synchronized(HashUser.class){
-                if (INSTANCE == null){
-                    INSTANCE = new HashUser();
-                }
-            }
-        }
+    public static HashUser getInstance() {
         return INSTANCE;
     }
 
-    public User searchHash(String email){
-        if(!users.isEmpty() && this.users.get(email) != null) {
-            return this.users.get(email);
-        }else{
-            try {
-                User u = dao.search(email);
-                if (u != null){
-                    users.put(email, u);
-                }
-                return u;
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+    public User searchHash(String email) throws SQLException {
+        User user = users.get(email);
+        if (user != null) {
+            return user;
         }
-        return null;
+        user = dao.search(email);
+        if (user != null) {
+            users.put(email, user);
+        }
+        return user;
     }
 }
