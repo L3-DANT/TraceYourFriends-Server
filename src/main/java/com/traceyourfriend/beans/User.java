@@ -74,14 +74,7 @@ public class User implements Comparable<User> {
         this.id = id;
     }
 
-    public Hashtable<String,String> getCoor(){
-        Hashtable<String,String> coor = new Hashtable<>();
 
-        coor.put("coorX", this.coorX);
-        coor.put("coorY", this.coorY);
-
-        return coor;
-    }
 
     public void setCoorX(String coorNew){this.coorX = coorNew;}
 

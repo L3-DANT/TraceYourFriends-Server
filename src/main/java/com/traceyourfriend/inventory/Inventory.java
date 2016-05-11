@@ -4,7 +4,9 @@ import com.google.gson.Gson;
 import com.pusher.rest.Pusher;
 import com.traceyourfriend.beans.User;
 import com.traceyourfriend.dao.UsersDAO;
+import com.traceyourfriend.utils.Coordinate;
 import com.traceyourfriend.utils.HashUser;
+import com.traceyourfriend.utils.PusherSingleton;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.*;
@@ -72,22 +74,25 @@ public class Inventory {
 		return new Gson().toJson(user);
 	}
 
-	@GET
-	@Path("Coor/{name}/{coorX}/{coorY}")
-	public Response Coor(@PathParam("name") final String name, @PathParam("coorX") final String coorX, @PathParam("coorY") final String coorY) throws SQLException {
-		User u = dao.findWithName(name);
-		if (u == null) {
-			throw new NotFoundException();
-		}
-		u.setCoorX(coorX);
-		u.setCoorY(coorY);
+	@POST
+	@Path("coor")
+	public String Coor(String message) throws SQLException {
+		Coordinate coordinate = new Gson().fromJson(message, Coordinate.class);
 
-		String url = "http://" + "272ee489a902c2f6a96f" + ":" + "efb0b30a6239f96d1e95" + "@api.pusherapp.com:80/apps/" + "195526";
-		Pusher pusher = new Pusher(url);
-		pusher.trigger(u.getName(), "coor", Collections.singletonMap(u.getName(),u.getCoor()));
+		HashUser h = HashUser.getInstance();
+		User u = h.searchHash(coordinate.getName());
+		if (u == null) {
+			return new Gson().toJson(500);
+		}
+		u.setCoorX(coordinate.getCoorX());
+		u.setCoorY(coordinate.getCoorY());
+		Pusher pusher = PusherSingleton.getInstance().GetPusher();
+		pusher.trigger(u.getName(), "coorX", coordinate.getCoorX());
+		pusher.trigger(u.getName(), "coorY", coordinate.getCoorY());
+
 		// Never returns nothing because your server will have to response something very basic
 		// You have a lot of warnings on some server for this kind of error.
-		return Response.noContent().build();
+		return new Gson().toJson(u.getDemandesAmi());
 	}
 
 	@POST
@@ -107,6 +112,8 @@ public class Inventory {
 		User user = h.searchHash(u.getMail());
 		int cone;
 		if (user != null && u.getPassword().equals(user.getPassword())) {
+			Pusher pusher = PusherSingleton.getInstance().GetPusher();
+			pusher.trigger(user.getName(),"connected",true);
 			cone = 200;
 		}else{
 			cone = 500;
