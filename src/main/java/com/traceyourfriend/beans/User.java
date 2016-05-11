@@ -16,7 +16,9 @@ public class User implements Comparable<User> {
 
     private String coorY;
 
-    private ArrayList<User> contacts;
+    private ArrayList<String> amis;
+
+    private ArrayList<String> demandesAmi;
 
     public User(){}
 
@@ -30,13 +32,14 @@ public class User implements Comparable<User> {
         this("",mail,password);
     }
 
-    public User(String name, String mail, String password, String coorX, String coorY, ArrayList<User> contacts) {
+    public User(String name, String mail, String password, String coorX, String coorY, ArrayList<String> amis, ArrayList<String> demandesAmi) {
         this.name = name;
         this.mail = mail;
         this.password = password;
         this.coorX = coorX;
         this.coorY = coorY;
-        this.contacts = contacts;
+        this.amis = amis;
+        this.demandesAmi = demandesAmi;
     }
 
     public String getName() {
@@ -84,9 +87,13 @@ public class User implements Comparable<User> {
 
     public void setCoorY(String coorNew){this.coorY = coorNew;}
 
-    public ArrayList<User> getContacts(){return contacts;}
+    public ArrayList<String> getAmis(){return amis;}
 
-    public void setContacts(ArrayList<User> contacts){this.contacts = contacts;}
+    public void setAmis(ArrayList<String> contacts){this.amis = contacts;}
+
+    public ArrayList<String> getDemandesAmi(){return demandesAmi;}
+
+    public void setDemandesAmi(ArrayList<String> demandesAmi){this.amis = demandesAmi;}
 
     @Override
     public boolean equals(Object o) {
@@ -112,6 +119,15 @@ public class User implements Comparable<User> {
     @Override
     public String toString() {
         return mail;
+    }
+
+    public boolean estAmi(String name){
+        for (String ami : amis){
+            if (ami.equals(name)){
+                return true;
+            }
+        }
+        return false;
     }
 
 

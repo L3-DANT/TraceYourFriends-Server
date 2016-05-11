@@ -5,12 +5,15 @@ import com.traceyourfriend.beans.User;
 import com.traceyourfriend.dao.UsersDAO;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class HashUser {
 
-    private final ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();;
+    private final ConcurrentHashMap<String, User> usersMail = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, User> usersName = new ConcurrentHashMap<>();
     private final UsersDAO dao = new UsersDAO();
 
     /** Constructeur privé */
@@ -24,15 +27,30 @@ public class HashUser {
         return INSTANCE;
     }
 
-    public User searchHash(String email) throws SQLException {
-        User user = users.get(email);
+    public User searchHash(String emailOrName) throws SQLException {
+        User user = usersMail.get(emailOrName);
         if (user != null) {
             return user;
         }
-        user = dao.search(email);
+        user = usersName.get(emailOrName);
         if (user != null) {
-            users.put(email, user);
+            return user;
+        }
+        user = dao.search(emailOrName);
+        if (user != null) {
+            usersMail.put(emailOrName, user);
+            usersName.put(emailOrName, user);
         }
         return user;
+    }
+
+    public ArrayList<String> searchListContacts(String recherche){
+        ArrayList<String> contactInSearch = new ArrayList<>();
+        for (Map.Entry<String, User> e : usersName.entrySet()) {
+            if (e.getKey().startsWith(recherche)) {
+                contactInSearch.add(e.getValue().getName());
+            }
+        }
+        return contactInSearch;
     }
 }

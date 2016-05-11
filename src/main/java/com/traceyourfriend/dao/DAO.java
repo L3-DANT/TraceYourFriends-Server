@@ -13,8 +13,6 @@ public interface DAO <T>{
 
     //T merge(T object) throws SQLException;
 
-    User findWithEmail(String email) throws SQLException;
-
     User findWithName(String name) throws SQLException;
 
     List<User> findAll() throws SQLException;
