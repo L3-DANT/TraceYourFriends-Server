@@ -110,13 +110,13 @@ public class Inventory {
 		HashUser h = HashUser.getInstance();
 		User u = new Gson().fromJson(message, User.class);
 		User user = h.searchHash(u.getMail());
-		int cone;
+		ArrayList<String> cone= new ArrayList<String>();
 		if (user != null && u.getPassword().equals(user.getPassword())) {
 			Pusher pusher = PusherSingleton.getInstance().GetPusher();
 			pusher.trigger(user.getName(),"connected",true);
-			cone = 200;
+			cone = user.getAmis();
 		}else{
-			cone = 500;
+			cone = null;
 		}
 		return new Gson().toJson(cone);
 
