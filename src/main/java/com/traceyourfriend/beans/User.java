@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class User implements Comparable<User> {
+
     private long id;
 
     private String name;
@@ -20,6 +21,9 @@ public class User implements Comparable<User> {
 
     private ArrayList<String> demandesAmi;
 
+    private ArrayList<String> favoris;
+
+
     public User(){}
 
     public User(String name, String mail, String password) {
@@ -32,7 +36,7 @@ public class User implements Comparable<User> {
         this("",mail,password);
     }
 
-    public User(String name, String mail, String password, String coorX, String coorY, ArrayList<String> amis, ArrayList<String> demandesAmi) {
+    public User(String name, String mail, String password, String coorX, String coorY, ArrayList<String> amis, ArrayList<String> demandesAmi, ArrayList<String> favoris) {
         this.name = name;
         this.mail = mail;
         this.password = password;
@@ -40,10 +44,11 @@ public class User implements Comparable<User> {
         this.coorY = coorY;
         this.amis = amis;
         this.demandesAmi = demandesAmi;
+        this.favoris = favoris;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -51,7 +56,7 @@ public class User implements Comparable<User> {
     }
 
     public String getMail() {
-        return mail;
+        return this.mail;
     }
 
     public void setMail(String mail) {
@@ -59,7 +64,7 @@ public class User implements Comparable<User> {
     }
 
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     public void setPassword(String password) {
@@ -67,51 +72,63 @@ public class User implements Comparable<User> {
     }
 
     public long getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(long id) {
         this.id = id;
     }
 
-
-
     public void setCoorX(String coorNew){this.coorX = coorNew;}
 
     public void setCoorY(String coorNew){this.coorY = coorNew;}
 
-    public ArrayList<String> getAmis(){return amis;}
+    public ArrayList<String> getAmis(){return this.amis;}
 
     public void setAmis(ArrayList<String> contacts){this.amis = contacts;}
 
-    public ArrayList<String> getDemandesAmi(){return demandesAmi;}
+    public boolean addAmi(String ami){return this.amis.add(ami);}
 
-    public void setDemandesAmi(ArrayList<String> demandesAmi){this.amis = demandesAmi;}
+    public boolean removeAmi(String ami){return this.amis.remove(ami);}
+
+    public ArrayList<String> getDemandesAmi(){return this.demandesAmi;}
+
+    public void setDemandesAmi(ArrayList<String> demandesAmi){this.demandesAmi = demandesAmi;}
+
+    public boolean addDemandeAmi(String demandeAmi){return this.demandesAmi.add(demandeAmi);}
+
+    public boolean removeDemandeAmi(String demandeAmi){return this.demandesAmi.remove(demandeAmi);}
+
+    public ArrayList<String> getFavoris(){return this.favoris;}
+
+    public void setFavoris(ArrayList<String> favoris){this.favoris = favoris;}
+
+    public boolean addFavori(String favori){return this.favoris.add(favori);}
+
+    public boolean removeFavori(String favori){return this.favoris.remove(favori);}
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || !(o instanceof User)) return false;
 
-        User user = (User) o;
-
-        return !(mail != null ? !mail.equals(user.mail) : user.mail != null);
+        return !(this.mail != null ? !this.mail.equals(((User)o).mail) : ((User)o).mail != null);
 
     }
 
     @Override
     public int hashCode() {
-        return mail != null ? mail.hashCode() : 0;
+        return this.mail != null ? this.mail.hashCode() : 0;
     }
 
     @Override
-    public int compareTo(User o) {
-        return mail.compareToIgnoreCase(o.getMail());
+    public int compareTo(User u) {
+        return this.mail.compareToIgnoreCase(u.getMail());
     }
 
     @Override
     public String toString() {
-        return mail;
+        return this.mail;
     }
 
     public boolean estAmi(String name){

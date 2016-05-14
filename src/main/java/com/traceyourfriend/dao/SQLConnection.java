@@ -5,15 +5,19 @@ import java.sql.DriverManager;
 
 public class SQLConnection {
 
-    public static final SQLConnection db = new SQLConnection();
+	private static final SQLConnection db = new SQLConnection();
+
 	private Connection conn;
 
-    public Connection getDbCon() {
-        return conn;
-    }
 
 	private SQLConnection() {
 		initConnection();
+	}
+
+	public static SQLConnection getSQLCon(){return db;}
+
+	public Connection getDbCon() {
+		return this.conn;
 	}
 
 	private void initConnection() {
