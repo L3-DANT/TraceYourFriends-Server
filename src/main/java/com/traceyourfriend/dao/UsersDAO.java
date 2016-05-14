@@ -25,7 +25,7 @@ public class UsersDAO implements DAO{
 	private static final String SQL_INSERT_USER = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
     private static final String SQL_SELECT_USER = "SELECT * FROM users";
 
-    private final Connection connection = SQLConnection.db.getDbCon();
+    private final Connection connection = SQLConnection.getSQLCon().getDbCon();
 
 	/**
 	 * This method will create a users in the users table.
