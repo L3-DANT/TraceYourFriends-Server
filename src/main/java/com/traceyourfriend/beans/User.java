@@ -21,8 +21,6 @@ public class User implements Comparable<User> {
 
     private ArrayList<String> demandesAmi;
 
-    private ArrayList<String> favoris;
-
 
     public User(){}
 
@@ -36,7 +34,7 @@ public class User implements Comparable<User> {
         this("",mail,password);
     }
 
-    public User(String name, String mail, String password, String coorX, String coorY, ArrayList<String> amis, ArrayList<String> demandesAmi, ArrayList<String> favoris) {
+    public User(String name, String mail, String password, String coorX, String coorY, ArrayList<String> amis, ArrayList<String> demandesAmi) {
         this.name = name;
         this.mail = mail;
         this.password = password;
@@ -44,7 +42,6 @@ public class User implements Comparable<User> {
         this.coorY = coorY;
         this.amis = amis;
         this.demandesAmi = demandesAmi;
-        this.favoris = favoris;
     }
 
     public String getName() {
@@ -99,14 +96,6 @@ public class User implements Comparable<User> {
 
     public boolean removeDemandeAmi(String demandeAmi){return this.demandesAmi.remove(demandeAmi);}
 
-    public ArrayList<String> getFavoris(){return this.favoris;}
-
-    public void setFavoris(ArrayList<String> favoris){this.favoris = favoris;}
-
-    public boolean addFavori(String favori){return this.favoris.add(favori);}
-
-    public boolean removeFavori(String favori){return this.favoris.remove(favori);}
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -134,12 +123,11 @@ public class User implements Comparable<User> {
     }
 
     public boolean estAmi(String name){
-        for (String ami : amis){
-            if (ami.equals(name)){
-                return true;
-            }
-        }
-        return false;
+        return amis.contains(name);
+    }
+
+    public boolean aDemande(String name){
+        return demandesAmi.contains(name);
     }
 
 
