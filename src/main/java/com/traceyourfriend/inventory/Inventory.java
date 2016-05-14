@@ -75,7 +75,7 @@ public class Inventory {
 	}
 
 	@POST
-	@Path("coor")
+	@Path("coord")
 	public String Coor(String message) throws SQLException {
 		Coordinate coordinate = new Gson().fromJson(message, Coordinate.class);
 
@@ -123,7 +123,7 @@ public class Inventory {
 	}
 
 	@POST
-	@Path("rechercheContact")
+	@Path("search/contact")
 	public String rechercheContact(String recherche){
 		HashUser h = HashUser.getInstance();
 		ArrayList<String> listContact = h.searchListContacts(new Gson().fromJson(recherche, String.class));
@@ -132,17 +132,59 @@ public class Inventory {
 	}
 
 	@POST
-	@Path("ajoutAmis")
-	public String ajoutAmis(String message) throws SQLException{
+	@Path("invite")
+	public String demandeAmi(String message) throws SQLException{
 		HashUser h = HashUser.getInstance();
 		String name = new Gson().fromJson("name", String.class);
 		String nameAmi = new Gson().fromJson("nameAmi", String.class);
 		User user = h.searchHash(name);
 		User userAmi = h.searchHash(nameAmi);
-		if (!user.estAmi(userAmi.getName())){
-			userAmi.getDemandesAmi().add(name);
+		if (!user.estAmi(userAmi.getName()) && !userAmi.aDemande(user.getName())){
+			if(user.aDemande(nameAmi)){
+				user.removeDemandeAmi(nameAmi);
+				user.addAmi(nameAmi);
+				userAmi.addAmi(name);
+			} else{
+				userAmi.addDemandeAmi(name);
+			}
 			return "200";
 		}
 		return "500";
 	}
+
+	@POST
+	@Path("request")
+	public String refusAmi(String message) throws SQLException{
+		HashUser h = HashUser.getInstance();
+		String name = new Gson().fromJson("name", String.class);
+		String nameAmi = new Gson().fromJson("nameAmi", String.class);
+		Boolean reponse = new Gson().fromJson("reponse", Boolean.class);
+		User user = h.searchHash(name);
+		User userAmi = h.searchHash(nameAmi);
+		if (user.aDemande(nameAmi)){
+			user.removeDemandeAmi(nameAmi);
+			if (reponse){
+				user.addAmi(nameAmi);
+				userAmi.addAmi(name);
+			}
+			return "200";
+		}
+		return "500";
+	}
+
+	@POST
+	@Path("delete")
+	public String supprimerAmi(String message) throws SQLException{
+		HashUser h = HashUser.getInstance();
+		String name = new Gson().fromJson("name", String.class);
+		String nameAmi = new Gson().fromJson("nameAmi", String.class);
+		User user = h.searchHash(name);
+		User userAmi = h.searchHash(nameAmi);
+		if (user.estAmi(nameAmi)){
+			user.removeAmi(nameAmi);
+			return "200";
+		}
+		return "500";
+	}
+
 }
