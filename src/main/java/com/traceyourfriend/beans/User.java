@@ -112,7 +112,9 @@ public class User implements Comparable<User> {
         if (this == o) return true;
         if (o == null || !(o instanceof User)) return false;
 
-        return !(this.mail != null ? !this.mail.equals(((User)o).mail) : ((User)o).mail != null);
+        User u = (User)o;
+
+        return !(this.mail != null ? !this.mail.equals(u.mail) : u.mail != null);
 
     }
 
