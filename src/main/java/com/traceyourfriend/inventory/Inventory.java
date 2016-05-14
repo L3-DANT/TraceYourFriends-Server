@@ -131,15 +131,17 @@ public class Inventory {
 		return new Gson().toJson(listContact.toString());
 	}
 
+/*Demande d'ami*/
 	@POST
 	@Path("invite")
-	public String demandeAmi(String message) throws SQLException{
+	public String inviteAmi(String message) throws SQLException{
 		HashUser h = HashUser.getInstance();
 		String name = new Gson().fromJson("name", String.class);
 		String nameAmi = new Gson().fromJson("nameAmi", String.class);
 		User user = h.searchHash(name);
 		User userAmi = h.searchHash(nameAmi);
 		if (!user.estAmi(userAmi.getName()) && !userAmi.aDemande(user.getName())){
+			/*Si un utilisateur invite un autre utilisateur qui de son côté a aussi fait la demande auparavant, alors ils deviennent amis sans demande de confirmation*/
 			if(user.aDemande(nameAmi)){
 				user.removeDemandeAmi(nameAmi);
 				user.addAmi(nameAmi);
@@ -152,9 +154,10 @@ public class Inventory {
 		return "500";
 	}
 
+	/*Accepter ou refuser une invitation*/
 	@POST
 	@Path("request")
-	public String refusAmi(String message) throws SQLException{
+	public String requestAmi(String message) throws SQLException{
 		HashUser h = HashUser.getInstance();
 		String name = new Gson().fromJson("name", String.class);
 		String nameAmi = new Gson().fromJson("nameAmi", String.class);
@@ -174,7 +177,7 @@ public class Inventory {
 
 	@POST
 	@Path("delete")
-	public String supprimerAmi(String message) throws SQLException{
+	public String deleteAmi(String message) throws SQLException{
 		HashUser h = HashUser.getInstance();
 		String name = new Gson().fromJson("name", String.class);
 		String nameAmi = new Gson().fromJson("nameAmi", String.class);
@@ -182,6 +185,7 @@ public class Inventory {
 		User userAmi = h.searchHash(nameAmi);
 		if (user.estAmi(nameAmi)){
 			user.removeAmi(nameAmi);
+			userAmi.removeAmi(name);
 			return "200";
 		}
 		return "500";
