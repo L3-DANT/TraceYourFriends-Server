@@ -35,12 +35,11 @@ public class Inventory {
 	/**
 	 * This method will return all users that are listed
 	 * in users table.
-	 * <p/>
 	 * Example would be:
 	 * http://localhost:8080/TraceYourFriends/api/users/
 	 *
 	 * @return - JSON array string
-	 * @throws Exception
+	 * @throws SQLException
 	 */
 	@GET
 	public String findAll() throws SQLException {
@@ -53,27 +52,13 @@ public class Inventory {
 	 * This method will return the specific name of user is looking for.
 	 * It is very similar to the method findAll except this method uses the
 	 * PathParam to bring in the data.
-	 * <p/>
 	 * Example would be:
-	 * http://localhost:8080/TraceYourFriends/api/users/searchName/aniss
+	 * http://localhost:8080/TraceYourFriends/api/users/coord
 	 *
-	 * @param name - name user
+	 * @param message - emailOrName + coorX + coorY
 	 * @return - json array results list from the database
-	 * @throws Exception
+	 * @throws SQLException
 	 */
-	@Path("searchName/{name}")
-	@GET
-	public String findWithName(@PathParam("name") String name) throws SQLException {
-		if (StringUtils.isEmpty(name)) {
-			throw new NotFoundException();
-		}
-		User user = dao.findWithName(name);
-		if (user == null) {
-			throw new NotFoundException();
-		}
-		return new Gson().toJson(user);
-	}
-
 	@POST
 	@Path("coord")
 	public String Coor(String message) throws SQLException {
@@ -89,11 +74,18 @@ public class Inventory {
 		Pusher pusher = PusherSingleton.getInstance().GetPusher();
 		pusher.trigger(u.getName(), "coorX", coordinate.getCoorX());
 		pusher.trigger(u.getName(), "coorY", coordinate.getCoorY());
-
-		// Never returns nothing because your server will have to response something very basic
-		// You have a lot of warnings on some server for this kind of error.
 		return new Gson().toJson(u.getDemandesAmi());
 	}
+
+	/**
+	 * This method will permit sign in a specific user
+	 * Example would be:
+	 * http://localhost:8080/TraceYourFriends/api/users/inscription
+	 *
+	 * @param message - email + name + password
+	 * @return - String 500 if crash or 200 if it's ok
+	 * @throws SQLException
+	 */
 
 	@POST
 	@Path("inscription")
@@ -104,16 +96,26 @@ public class Inventory {
 
 	}
 
+	/**
+	 * This method will permit to log in a specific user
+	 * Example would be:
+	 * http://localhost:8080/TraceYourFriends/api/users/connexion
+	 *
+	 * @param message - emailOrName + password
+	 * @return - String 500 if crash or 200 if it's ok
+	 * @throws SQLException
+	 */
+
 	@POST
 	@Path("connexion")
 	public String Connexion(String message) throws SQLException{
 		HashUser h = HashUser.getInstance();
 		User u = new Gson().fromJson(message, User.class);
 		User user = h.searchHash(u.getMail());
-		ArrayList<String> cone= new ArrayList<String>();
+		ArrayList<String> cone;
 		if (user != null && u.getPassword().equals(user.getPassword())) {
-			Pusher pusher = PusherSingleton.getInstance().GetPusher();
-			pusher.trigger(user.getName(),"connected",true);
+			//Pusher pusher = PusherSingleton.getInstance().GetPusher();
+			//pusher.trigger(user.getName(),"connected",true);
 			cone = user.getAmis();
 		}else{
 			cone = null;
@@ -122,6 +124,16 @@ public class Inventory {
 
 	}
 
+
+	/**
+	 * This method will permit to allow or dismiss a friend request
+	 * Example would be:
+	 * http://localhost:8080/TraceYourFriends/api/users/search/contact
+	 *
+	 * @param recherche - emailOrName of the user we search for
+	 * @return - String 500 if crash or 200 if it's ok
+	 * @throws SQLException
+	 */
 	@POST
 	@Path("search/contact")
 	public String rechercheContact(String recherche){
@@ -131,7 +143,16 @@ public class Inventory {
 		return new Gson().toJson(listContact.toString());
 	}
 
-/*Demande d'ami*/
+
+	/**
+	 * This method will permit to send a request to an other user
+	 * Example would be:
+	 * http://localhost:8080/TraceYourFriends/api/users/invite
+	 *
+	 * @param message - emailOrName + friend emailOrName
+	 * @return - String 500 if crash or 200 if it's ok
+	 * @throws SQLException
+	 */
 	@POST
 	@Path("invite")
 	public String inviteAmi(String message) throws SQLException{
@@ -154,7 +175,15 @@ public class Inventory {
 		return "500";
 	}
 
-	/*Accepter ou refuser une invitation*/
+	/**
+	 * This method will permit to allow or dismiss a friend request
+	 * Example would be:
+	 * http://localhost:8080/TraceYourFriends/api/users/request
+	 *
+	 * @param message - emailOrName + friend emailOrName + boolean false or true
+	 * @return - String 500 if crash or 200 if it's ok
+	 * @throws SQLException
+	 */
 	@POST
 	@Path("request")
 	public String requestAmi(String message) throws SQLException{
@@ -175,6 +204,16 @@ public class Inventory {
 		return "500";
 	}
 
+
+	/**
+	 * This method will delete a specific user thanks to his name
+	 * Example would be:
+	 * http://localhost:8080/TraceYourFriends/api/users/delete
+	 *
+	 * @param message - emailOrName + emailOrName of the user we want to delete
+	 * @return - String 500 if crash or 200 if it's ok
+	 * @throws SQLException
+	 */
 	@POST
 	@Path("delete")
 	public String deleteAmi(String message) throws SQLException{
