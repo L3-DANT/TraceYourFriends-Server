@@ -34,8 +34,8 @@ public class UsersDAO implements DAO{
 	 * Never add parameter straight into the prepareStatement
 	 *
 	 * @param user - a user
-	 * @return - return the user created
-	 * @throws Exception
+	 * @return - return the user created (now it's a int 200 or 500)
+	 * @throws SQLException
 	 */
 
 	@Override
@@ -64,14 +64,14 @@ public class UsersDAO implements DAO{
 	}
 
 	/**
-	 * This method will search for a specific users with via his email from the users table.
+	 * This method will search for a specific users with via his email or name from the users table.
 	 * By using prepareStatement and the ?, we are protecting against sql injection
 	 *
 	 * Never add parameter straight into the prepareStatement
 	 *
 	 * @param emailOrName - email user
-	 * @return - json array of the results from the database
-	 * @throws Exception
+	 * @return - the User that found in the database
+	 * @throws SQLException
 	 */
 
 	@Override
@@ -106,36 +106,11 @@ public class UsersDAO implements DAO{
 		resultSet.close();
 		return u;
 	}
-
-	/**
-	 * This method will search for a specific users with via his name from the users table.
-	 * By using prepareStatement and the ?, we are protecting against sql injection
-	 *
-	 * Never add parameter straight into the prepareStatement
-	 *
-	 * @param name - product brand
-	 * @return - json array of the results from the database
-	 * @throws Exception
-	 */
-
-	@Override
-	public User findWithName(String name) throws SQLException {
-		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_USER_BY_NAME)){
-			preparedStatement.setString(1, name); //protect against sql injection
-			try(ResultSet resultSet = preparedStatement.executeQuery()) {
-				if (resultSet.next()) {
-					return convertFromResultSet(resultSet);
-				}
-			}
-		}
-		return null;
-	}
-
 	/**
      * This method will return all users.
      *
-     * @return - all users in json format
-     * @throws Exception
+     * @return - a list of all User
+     * @throws SQLException
 	 */
 
     @Override

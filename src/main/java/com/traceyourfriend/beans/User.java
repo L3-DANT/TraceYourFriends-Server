@@ -1,7 +1,6 @@
 package com.traceyourfriend.beans;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 public class User implements Comparable<User> {
 
@@ -28,6 +27,10 @@ public class User implements Comparable<User> {
         this.name = name;
         this.mail = mail;
         this.password = password;
+        this.amis = new ArrayList<>();
+        this.amis.add("Aniss");
+        this.amis.add("Kaci");
+        this.amis.add("Alban");
     }
 
     public User(String mail, String password) {
