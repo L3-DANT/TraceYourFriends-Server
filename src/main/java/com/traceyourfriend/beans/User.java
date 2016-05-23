@@ -20,6 +20,8 @@ public class User implements Comparable<User> {
 
     private ArrayList<String> demandesAmi;
 
+    private ArrayList<String> invitations;
+
 
     public User(){}
 
@@ -37,7 +39,7 @@ public class User implements Comparable<User> {
         this("",mail,password);
     }
 
-    public User(String name, String mail, String password, String coorX, String coorY, ArrayList<String> amis, ArrayList<String> demandesAmi) {
+    public User(String name, String mail, String password, String coorX, String coorY, ArrayList<String> amis, ArrayList<String> demandesAmi, ArrayList<String> invitations) {
         this.name = name;
         this.mail = mail;
         this.password = password;
@@ -45,6 +47,7 @@ public class User implements Comparable<User> {
         this.coorY = coorY;
         this.amis = amis;
         this.demandesAmi = demandesAmi;
+        this.invitations = invitations;
     }
 
     public String getName() {
@@ -98,6 +101,14 @@ public class User implements Comparable<User> {
     public boolean addDemandeAmi(String demandeAmi){return this.demandesAmi.add(demandeAmi);}
 
     public boolean removeDemandeAmi(String demandeAmi){return this.demandesAmi.remove(demandeAmi);}
+
+    public ArrayList<String> getInvitaitons(){return this.invitations;}
+
+    public void setInvitations(ArrayList<String> invitations){this.amis = invitations;}
+
+    public boolean addInvitation(String invitation){return this.amis.add(invitation);}
+
+    public boolean removeInvitation(String invitation){return this.amis.remove(invitation);}
 
     @Override
     public boolean equals(Object o) {

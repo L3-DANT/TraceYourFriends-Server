@@ -166,6 +166,7 @@ public class Inventory {
 				userAmi.addAmi(name);
 			} else{
 				userAmi.addDemandeAmi(name);
+				user.addInvitation(nameAmi);
 			}
 			return "200";
 		}
