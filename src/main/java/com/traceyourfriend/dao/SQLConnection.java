@@ -22,7 +22,7 @@ public class SQLConnection {
 
 	private void initConnection() {
 		String dbHost = "localhost";
-		String dbName = "TraceYourFriend-DB";
+		String dbName = "traceyourfriends";
 		String url= "jdbc:mysql://"+ dbHost + ":8889/"+ dbName;
 		String driver = "com.mysql.jdbc.Driver";
 		String userName = "root";
