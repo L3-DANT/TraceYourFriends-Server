@@ -7,15 +7,10 @@ import com.traceyourfriend.dao.UsersDAO;
 import com.traceyourfriend.utils.Coordinate;
 import com.traceyourfriend.utils.HashUser;
 import com.traceyourfriend.utils.PusherSingleton;
-import org.apache.commons.lang3.StringUtils;
-
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Hashtable;
 import java.util.List;
 
 
@@ -113,14 +108,16 @@ public class Inventory {
 		User u = new Gson().fromJson(message, User.class);
 		User user = h.searchHash(u.getMail());
 		ArrayList<String> cone;
+		int send = 200;
 		if (user != null && u.getPassword().equals(user.getPassword())) {
 			//Pusher pusher = PusherSingleton.getInstance().GetPusher();
 			//pusher.trigger(user.getName(),"connected",true);
 			cone = user.getAmis();
 		}else{
 			cone = null;
+            send = 500;
 		}
-		return new Gson().toJson(cone);
+		return new Gson().toJson(send);
 
 	}
 
