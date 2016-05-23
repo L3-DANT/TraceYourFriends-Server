@@ -162,6 +162,7 @@ public class Inventory {
 			/*Si un utilisateur invite un autre utilisateur qui de son côté a aussi fait la demande auparavant, alors ils deviennent amis sans demande de confirmation*/
 			if(user.aDemande(nameAmi)){
 				user.removeDemandeAmi(nameAmi);
+				userAmi.removeInvitation(name);
 				user.addAmi(nameAmi);
 				userAmi.addAmi(name);
 			} else{
@@ -193,6 +194,7 @@ public class Inventory {
 		User userAmi = h.searchHash(nameAmi);
 		if (user.aDemande(nameAmi)){
 			user.removeDemandeAmi(nameAmi);
+			userAmi.removeInvitation(name);
 			if (reponse){
 				user.addAmi(nameAmi);
 				userAmi.addAmi(name);
