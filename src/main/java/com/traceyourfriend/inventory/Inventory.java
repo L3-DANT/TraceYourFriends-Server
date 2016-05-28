@@ -62,7 +62,7 @@ public class Inventory {
 		HashUser h = HashUser.getInstance();
 		User u = h.searchHash(coordinate.getName());
 		if (u == null) {
-			return new Gson().toJson(500);
+			return new Gson().toJson(null);
 		}
 		u.setCoorX(coordinate.getCoorX());
 		u.setCoorY(coordinate.getCoorY());
