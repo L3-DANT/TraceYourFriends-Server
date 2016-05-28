@@ -62,14 +62,14 @@ public class Inventory {
 		HashUser h = HashUser.getInstance();
 		User u = h.searchHash(coordinate.getName());
 		if (u == null) {
-			return new Gson().toJson(500);
+			return new Gson().toJson(null);
 		}
 		u.setCoorX(coordinate.getCoorX());
 		u.setCoorY(coordinate.getCoorY());
 		//Pusher pusher = PusherSingleton.getInstance().GetPusher();
 		//pusher.trigger(u.getName(), "coorX", coordinate.getCoorX());
 		//pusher.trigger(u.getName(), "coorY", coordinate.getCoorY());
-		return new Gson().toJson(u.getAmis());
+		return new Gson().toJson(u.getDemandesAmi());
 	}
 
 	/**

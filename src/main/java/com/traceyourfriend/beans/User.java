@@ -104,11 +104,11 @@ public class User implements Comparable<User> {
 
     public ArrayList<String> getInvitaitons(){return this.invitations;}
 
-    public void setInvitations(ArrayList<String> invitations){this.amis = invitations;}
+    public void setInvitations(ArrayList<String> invitations){this.invitations = invitations;}
 
-    public boolean addInvitation(String invitation){return this.amis.add(invitation);}
+    public boolean addInvitation(String invitation){return this.invitations.add(invitation);}
 
-    public boolean removeInvitation(String invitation){return this.amis.remove(invitation);}
+    public boolean removeInvitation(String invitation){return this.invitations.remove(invitation);}
 
     @Override
     public boolean equals(Object o) {
