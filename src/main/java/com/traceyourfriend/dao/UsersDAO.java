@@ -24,7 +24,7 @@ public class UsersDAO implements DAO{
     private static final String SQL_SELECT_USER_BY_NAME = "SELECT * FROM users WHERE name = ?";
 	private static final String SQL_INSERT_USER = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
     private static final String SQL_SELECT_USER = "SELECT * FROM users";
-	private static final String SQL_SELECT_FRIENDS = "SELECT u.name FROM users u, amis a WHERE a.ID_USER1 = ? AND u.ID = a.ID_USER2";
+	private static final String SQL_SELECT_FRIENDS = "SELECT DISTINCT u.name FROM users u, amis a WHERE ID_USER1=? AND a.ID_USER2=u.id";
 
     private final Connection connection = SQLConnection.getSQLCon().getDbCon();
 
