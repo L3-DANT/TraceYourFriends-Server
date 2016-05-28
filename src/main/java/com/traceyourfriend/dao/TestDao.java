@@ -11,21 +11,18 @@ import java.time.Clock;
 /**
  * Created by pyrob on 28/05/2016.
  */
-public class TestDao {
+public class TestDao{/*
 
-    DAO<User> userDao = new UsersDAO();
+    private UsersDAO dao = new UsersDAO();
+    private User user = new User();
 
     public static void main (String[] args){
 
-        for(int i = 1; i < 5; i++){
+        user =
 
 
-
-
-
-        }
 
 
         System.out.println("toto");
-    }
+    }*/
 }
