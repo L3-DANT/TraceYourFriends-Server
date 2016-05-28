@@ -66,9 +66,9 @@ public class Inventory {
 		}
 		u.setCoorX(coordinate.getCoorX());
 		u.setCoorY(coordinate.getCoorY());
-		Pusher pusher = PusherSingleton.getInstance().GetPusher();
-		pusher.trigger(u.getName(), "coorX", coordinate.getCoorX());
-		pusher.trigger(u.getName(), "coorY", coordinate.getCoorY());
+		//Pusher pusher = PusherSingleton.getInstance().GetPusher();
+		//pusher.trigger(u.getName(), "coorX", coordinate.getCoorX());
+		//pusher.trigger(u.getName(), "coorY", coordinate.getCoorY());
 		return new Gson().toJson(u.getDemandesAmi());
 	}
 
@@ -108,16 +108,14 @@ public class Inventory {
 		User u = new Gson().fromJson(message, User.class);
 		User user = h.searchHash(u.getMail());
 		ArrayList<String> cone;
-		int send = 200;
 		if (user != null && u.getPassword().equals(user.getPassword())) {
 			//Pusher pusher = PusherSingleton.getInstance().GetPusher();
 			//pusher.trigger(user.getName(),"connected",true);
 			cone = user.getAmis();
 		}else{
 			cone = null;
-            send = 500;
 		}
-		return new Gson().toJson(send);
+		return new Gson().toJson(cone);
 
 	}
 
