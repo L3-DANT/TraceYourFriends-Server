@@ -146,6 +146,7 @@ public class UsersDAO implements DAO{
 				int i = 0;
 				while (!resultSet.isLast()) {
 					user.addAmi(resultSet.getString(i));
+					resultSet.next();
 					i++;
 				}
 				return i;
