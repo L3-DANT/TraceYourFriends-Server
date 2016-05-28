@@ -69,7 +69,7 @@ public class Inventory {
 		//Pusher pusher = PusherSingleton.getInstance().GetPusher();
 		//pusher.trigger(u.getName(), "coorX", coordinate.getCoorX());
 		//pusher.trigger(u.getName(), "coorY", coordinate.getCoorY());
-		return new Gson().toJson(u.getDemandesAmi());
+		return new Gson().toJson(u.getAmis());
 	}
 
 	/**
