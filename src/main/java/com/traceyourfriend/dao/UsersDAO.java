@@ -136,20 +136,20 @@ public class UsersDAO implements DAO{
 	}
 
 	@Override
-	public List<User> loadFriends(User user) throws SQLException {
+	public int loadFriends(User user) throws SQLException {
 		List<User> users = new ArrayList<>();
 		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_FRIENDS)) {
 			String id = Long.toString(user.getId());
 			preparedStatement.setString(1, id); //protect against sql injection
 			preparedStatement.execute();
 			try(ResultSet resultSet = preparedStatement.executeQuery()) {
-				for (int i = 0; i<resultSet.getRow();i++) {
-					user.addAmi(resultSet.getString(0));
+				int i = 0;
+				while (!resultSet.isLast()) {
+					user.addAmi(resultSet.getString(i));
+					i++;
 				}
+				return i;
 			}
 		}
-		return users;
 	}
-
-
 }
