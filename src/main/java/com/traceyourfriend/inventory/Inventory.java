@@ -57,6 +57,7 @@ public class Inventory {
 	@POST
 	@Path("coord")
 	public String Coor(String message) throws SQLException {
+        System.out.println("recu");
 		Coordinate coordinate = new Gson().fromJson(message, Coordinate.class);
 
 		HashUser h = HashUser.getInstance();
@@ -227,5 +228,20 @@ public class Inventory {
 		}
 		return "500";
 	}
+
+    @POST
+    @Path("listFriend")
+    public String listFriend(String message) throws SQLException{
+        HashUser h = HashUser.getInstance();
+        User u = new Gson().fromJson(message, User.class);
+        User user = h.searchHash(u.getMail());
+        ArrayList<String> cone;
+        if (user != null) {
+            cone = user.getAmis();
+        }else{
+            cone = null;
+        }
+        return new Gson().toJson(cone);
+    }
 
 }
