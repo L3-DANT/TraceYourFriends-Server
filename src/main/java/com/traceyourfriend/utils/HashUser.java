@@ -40,6 +40,7 @@ public class HashUser {
         if (user != null) {
             usersMail.put(emailOrName, user);
             usersName.put(emailOrName, user);
+            dao.loadFriends(user);
         }
         return user;
     }
