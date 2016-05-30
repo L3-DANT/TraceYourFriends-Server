@@ -135,9 +135,9 @@ public class Inventory {
 	 */
 	@POST
 	@Path("search/contact")
-	public String rechercheContact(String recherche){
+	public String rechercheContact(String recherche) throws SQLException{
 		HashUser h = HashUser.getInstance();
-		ArrayList<String> listContact = h.searchListContacts(new Gson().fromJson(recherche, String.class));
+		ArrayList<String> listContact = h.searchListContacts(new Gson().fromJson(recherche, User.class).getMail());
 
 		return new Gson().toJson(listContact.toString());
 	}
