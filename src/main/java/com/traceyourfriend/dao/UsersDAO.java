@@ -234,10 +234,8 @@ public class UsersDAO implements DAO{
 			preparedStatement.setLong(2, friend.getId());
 			preparedStatement.setLong(3, friend.getId());
 			preparedStatement.setLong(4, user.getId());
-			try(ResultSet resultSet = preparedStatement.executeQuery()) {
-				preparedStatement.close();
-				resultSet.close();
-			}
+			preparedStatement.executeUpdate() ;
+			preparedStatement.close();
 		}
 	}
 }
