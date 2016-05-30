@@ -24,4 +24,6 @@ public interface DAO <T> {
     void deleteRequest(User current, User request) throws SQLException;
 
     void deleteInvitation(User current, User invitation) throws SQLException;
+
+    void acceptFriend(User user, User friend) throws SQLException;
 }
