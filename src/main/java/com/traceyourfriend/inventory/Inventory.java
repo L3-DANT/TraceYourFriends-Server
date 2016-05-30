@@ -184,20 +184,20 @@ public class Inventory {
 	@Path("request")
 	public String requestAmi(String message) throws SQLException{
 		HashUser h = HashUser.getInstance();
-		String name = new Gson().fromJson("name", String.class);
-		String nameAmi = new Gson().fromJson("nameAmi", String.class);
-		Boolean reponse = new Gson().fromJson("reponse", Boolean.class);
-		User user = h.searchHash(name);
-		User userAmi = h.searchHash(nameAmi);
-		if (user.aDemande(nameAmi)){
+		User u = new Gson().fromJson("name", User.class);
+		User uAmi = new Gson().fromJson("nameAmi", User.class);
+		Boolean reponse = new Gson().fromJson("bool", Boolean.class);
+		User user = h.searchHash(u.getMail());
+		User userAmi = h.searchHash(uAmi.getMail());
+		if (user.aDemande(userAmi.getName())){
 			dao.deleteRequest(user, userAmi);
 			dao.deleteInvitation(userAmi, user);
-			user.removeDemandeAmi(nameAmi);
-			userAmi.removeInvitation(name);
+			user.removeDemandeAmi(userAmi.getName());
+			userAmi.removeInvitation(user.getName());
 			if (reponse){
 				dao.acceptFriend(user, userAmi);
-				user.addAmi(nameAmi);
-				userAmi.addAmi(name);
+				user.addAmi(userAmi.getName());
+				userAmi.addAmi(user.getName());
 			}
 			return "200";
 		}
@@ -218,14 +218,14 @@ public class Inventory {
 	@Path("delete")
 	public String deleteAmi(String message) throws SQLException{
 		HashUser h = HashUser.getInstance();
-		String name = new Gson().fromJson("name", String.class);
-		String nameAmi = new Gson().fromJson("nameAmi", String.class);
-		User user = h.searchHash(name);
-		User userAmi = h.searchHash(nameAmi);
-		if (user.estAmi(nameAmi)){
+		User u = new Gson().fromJson("name", User.class);
+		User uAmi = new Gson().fromJson("nameAmi", User.class);
+		User user = h.searchHash(u.getMail());
+		User userAmi = h.searchHash(uAmi.getMail());
+		if (user.estAmi(userAmi.getName())){
 			dao.deleteFriend(user, userAmi);
-			user.removeAmi(nameAmi);
-			userAmi.removeAmi(name);
+			user.removeAmi(userAmi.getName());
+			userAmi.removeAmi(user.getName());
 			return "200";
 		}
 		return "500";
