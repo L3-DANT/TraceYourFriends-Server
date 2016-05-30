@@ -30,6 +30,7 @@ public class UsersDAO implements DAO{
 	private static final String SQL_DELETE_FRIEND = "DELETE FROM amis WHERE (ID_USER1=? AND ID_USER2=?) OR (ID_USER1=? AND ID_USER2=?)";
 	private static final String SQL_DELETE_REQUEST = "DELETE FROM demandes WHERE ID_USER1=? AND ID_USER2=?";
 	private static final String SQL_DELETE_INVITATION = "DELETE FROM invitation WHERE ID_USER1=? AND ID_USER2=?";
+	private static final String SQL_INSERT_FRIEND = "INSERT INTO amis (ID_USER1, ID_USER2) VALUES (?, ?), (?, ?)";
 
     private final Connection connection = SQLConnection.getSQLCon().getDbCon();
 
@@ -223,6 +224,20 @@ public class UsersDAO implements DAO{
 		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_INVITATION)) {
 			preparedStatement.setLong(1, user.getId());
 			preparedStatement.setLong(2, invitation.getId());
+			try(ResultSet resultSet = preparedStatement.executeQuery()) {
+				preparedStatement.close();
+				resultSet.close();
+			}
+		}
+	}
+
+	@Override
+	public void acceptFriend(User user, User friend) throws SQLException{
+		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_FRIEND)) {
+			preparedStatement.setLong(1, user.getId());
+			preparedStatement.setLong(2, friend.getId());
+			preparedStatement.setLong(3, friend.getId());
+			preparedStatement.setLong(4, user.getId());
 			try(ResultSet resultSet = preparedStatement.executeQuery()) {
 				preparedStatement.close();
 				resultSet.close();

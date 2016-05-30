@@ -197,6 +197,7 @@ public class Inventory {
 			user.removeDemandeAmi(nameAmi);
 			userAmi.removeInvitation(name);
 			if (reponse){
+				dao.acceptFriend(user, userAmi);
 				user.addAmi(nameAmi);
 				userAmi.addAmi(name);
 			}
