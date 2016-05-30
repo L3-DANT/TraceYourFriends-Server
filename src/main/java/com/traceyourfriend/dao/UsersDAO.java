@@ -136,7 +136,7 @@ public class UsersDAO implements DAO{
 	}
 
 	@Override
-	public boolean loadFriends(User user) throws SQLException {
+	public List<String> loadFriends(User user) throws SQLException {
 		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_FRIENDS)) {
 			preparedStatement.setString(1, user.getName());
 			try(ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -147,6 +147,6 @@ public class UsersDAO implements DAO{
 				resultSet.close();
 				}
 			}
-		return true;
+		return user.getAmis();
 	}
 }

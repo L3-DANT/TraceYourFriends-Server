@@ -13,6 +13,6 @@ public interface DAO <T>{
 
     User search(String email) throws SQLException;
 
-    boolean loadFriends(User user) throws SQLException;
+    List<String> loadFriends(User user) throws SQLException;
 
 }
