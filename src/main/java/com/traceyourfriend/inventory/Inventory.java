@@ -194,6 +194,8 @@ public class Inventory {
 		User user = h.searchHash(name);
 		User userAmi = h.searchHash(nameAmi);
 		if (user.aDemande(nameAmi)){
+			dao.deleteRequest(user, userAmi);
+			dao.deleteInvitation(userAmi, user);
 			user.removeDemandeAmi(nameAmi);
 			userAmi.removeInvitation(name);
 			if (reponse){
@@ -225,6 +227,7 @@ public class Inventory {
 		User user = h.searchHash(name);
 		User userAmi = h.searchHash(nameAmi);
 		if (user.estAmi(nameAmi)){
+			dao.deleteFriend(user, userAmi);
 			user.removeAmi(nameAmi);
 			userAmi.removeAmi(name);
 			return "200";
@@ -232,19 +235,20 @@ public class Inventory {
 		return "500";
 	}
 
-    @POST
-    @Path("listFriend")
-    public String listFriend(String message) throws SQLException{
-        HashUser h = HashUser.getInstance();
-        User u = new Gson().fromJson(message, User.class);
-        User user = h.searchHash(u.getMail());
-        ArrayList<String> cone;
-        if (user != null) {
-            cone = user.getAmis();
-        }else{
-            cone = null;
-        }
-        return new Gson().toJson(cone);
-    }
+	@POST
+	@Path("listFriend")
+	public String listFriend(String message) throws SQLException{
+		HashUser h = HashUser.getInstance();
+		User u = new Gson().fromJson(message, User.class);
+		User user = h.searchHash(u.getMail());
+		ArrayList<String> cone;
+		if (user != null) {
+			cone = user.getAmis();
+		}else{
+			cone = null;
+		}
+		return new Gson().toJson(cone);
+	}
+
 
 }
