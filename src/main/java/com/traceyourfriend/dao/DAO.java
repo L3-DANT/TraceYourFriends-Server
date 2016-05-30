@@ -15,4 +15,7 @@ public interface DAO <T>{
 
     List<String> loadFriends(User user) throws SQLException;
 
+    List<String> loadRequests(User user) throws SQLException;
+
+    List<String> loadInvitations(User user) throws SQLException;
 }

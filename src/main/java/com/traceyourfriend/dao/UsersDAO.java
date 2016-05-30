@@ -26,6 +26,7 @@ public class UsersDAO implements DAO{
     private static final String SQL_SELECT_USER = "SELECT * FROM users";
 	private static final String SQL_SELECT_FRIENDS = "SELECT DISTINCT u.name FROM users u, amis a WHERE a.ID_USER1=? AND a.ID_USER2=u.id";
 	private static final String SQL_SELECT_REQUESTS = "SELECT DISTINCT u.name FROM users u, demandes d WHERE d.ID_USER1=? AND d.ID_USER2=u.id";
+	private static final String SQL_SELECT_INVITATIONS = "SELECT DISTINCT u.name FROM users u, invitations i WHERE i.ID_USER1=? AND i.ID_USER2=u.id";
 
     private final Connection connection = SQLConnection.getSQLCon().getDbCon();
 
@@ -151,6 +152,7 @@ public class UsersDAO implements DAO{
 		return user.getAmis();
 	}
 
+	@Override
 	public List<String> loadRequests(User user) throws SQLException {
 		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_REQUESTS)) {
 			preparedStatement.setLong(1, user.getId());
@@ -163,5 +165,20 @@ public class UsersDAO implements DAO{
 			}
 		}
 		return user.getDemandesAmi();
+	}
+
+	@Override
+	public List<String> loadInvitations(User user) throws SQLException {
+		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_INVITATIONS)) {
+			preparedStatement.setLong(1, user.getId());
+			try(ResultSet resultSet = preparedStatement.executeQuery()) {
+				while (resultSet.next()) {
+					user.addInvitation(resultSet.getString(1));
+				}
+				preparedStatement.close();
+				resultSet.close();
+			}
+		}
+		return user.getInvitaitons();
 	}
 }
