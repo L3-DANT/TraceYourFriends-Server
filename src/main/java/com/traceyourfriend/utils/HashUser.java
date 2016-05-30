@@ -41,6 +41,7 @@ public class HashUser {
             usersMail.put(emailOrName, user);
             usersName.put(emailOrName, user);
             dao.loadFriends(user);
+            dao.loadRequests(user);
         }
         return user;
     }
