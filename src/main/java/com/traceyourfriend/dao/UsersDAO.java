@@ -138,7 +138,7 @@ public class UsersDAO implements DAO{
 	@Override
 	public List<String> loadFriends(User user) throws SQLException {
 		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_FRIENDS)) {
-			preparedStatement.setString(1, user.getName());
+			preparedStatement.setLong(1, user.getId());
 			try(ResultSet resultSet = preparedStatement.executeQuery()) {
 				while (resultSet.next()) {
 					user.addAmi(resultSet.getString(1));
