@@ -23,16 +23,26 @@ public class User implements Comparable<User> {
     private ArrayList<String> invitations;
 
 
-    public User(){}
+    public User(){
+        this.amis= new ArrayList<String>();
+        this.demandesAmi = new ArrayList<String>();
+        this.invitations = new ArrayList<String>();
+    }
 
     public User(String mail) {
         this.mail = mail;
+        this.amis= new ArrayList<String>();
+        this.demandesAmi = new ArrayList<String>();
+        this.invitations = new ArrayList<String>();
     }
 
     public User(String name, String mail, String password) {
         this.name = name;
         this.mail = mail;
         this.password = password;
+        this.amis= new ArrayList<String>();
+        this.demandesAmi = new ArrayList<String>();
+        this.invitations = new ArrayList<String>();
     }
 
     public User(String mail, String password) {
@@ -45,6 +55,9 @@ public class User implements Comparable<User> {
         this.password = password;
         this.coorX = coorX;
         this.coorY = coorY;
+        this.amis= new ArrayList<String>();
+        this.demandesAmi = new ArrayList<String>();
+        this.invitations = new ArrayList<String>();
         this.amis = amis;
         this.demandesAmi = demandesAmi;
         this.invitations = invitations;

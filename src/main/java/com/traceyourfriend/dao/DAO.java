@@ -13,6 +13,9 @@ public interface DAO <T>{
 
     User search(String email) throws SQLException;
 
-    int loadFriends(User user) throws SQLException;
+    List<String> loadFriends(User user) throws SQLException;
 
+    List<String> loadRequests(User user) throws SQLException;
+
+    List<String> loadInvitations(User user) throws SQLException;
 }
