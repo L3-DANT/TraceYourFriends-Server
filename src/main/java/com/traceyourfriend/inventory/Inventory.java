@@ -67,7 +67,11 @@ public class Inventory {
 		u.setCoorX(coordinate.getCoorX());
 		u.setCoorY(coordinate.getCoorY());
 		Pusher pusher = PusherSingleton.getInstance().GetPusher();
-		pusher.trigger(u.getName(), "coorX/coorY", coordinate.getCoorX() + "/" + coordinate.getCoorY());
+
+		for (String ami: u.getAmis()) {
+			pusher.trigger(ami, "coorX/coorY", coordinate.getName() + "/" +
+					coordinate.getCoorX() + "/" + coordinate.getCoorY());
+		}
 		return new Gson().toJson(u.getDemandesAmi());
 	}
 
@@ -231,19 +235,20 @@ public class Inventory {
 		return "500";
 	}
 
-    @POST
-    @Path("listFriend")
-    public String listFriend(String message) throws SQLException{
-        HashUser h = HashUser.getInstance();
-        User u = new Gson().fromJson(message, User.class);
-        User user = h.searchHash(u.getMail());
-        ArrayList<String> cone;
-        if (user != null) {
-            cone = user.getAmis();
-        }else{
-            cone = null;
-        }
-        return new Gson().toJson(cone);
-    }
+	@POST
+	@Path("listFriend")
+	public String listFriend(String message) throws SQLException{
+		HashUser h = HashUser.getInstance();
+		User u = new Gson().fromJson(message, User.class);
+		User user = h.searchHash(u.getMail());
+		ArrayList<String> cone;
+		if (user != null) {
+			cone = user.getAmis();
+		}else{
+			cone = null;
+		}
+		return new Gson().toJson(cone);
+	}
+
 
 }
