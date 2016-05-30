@@ -197,10 +197,8 @@ public class UsersDAO implements DAO{
 			preparedStatement.setLong(2, friend.getId());
 			preparedStatement.setLong(3, friend.getId());
 			preparedStatement.setLong(4, user.getId());
-			try(ResultSet resultSet = preparedStatement.executeQuery()) {
-				preparedStatement.close();
-				resultSet.close();
-			}
+			preparedStatement.executeUpdate();
+			preparedStatement.close();
 		}
 	}
 
@@ -211,10 +209,8 @@ public class UsersDAO implements DAO{
 		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_REQUEST)) {
 			preparedStatement.setLong(1, user.getId());
 			preparedStatement.setLong(2, request.getId());
-			try(ResultSet resultSet = preparedStatement.executeQuery()) {
-				preparedStatement.close();
-				resultSet.close();
-			}
+			preparedStatement.executeUpdate();
+			preparedStatement.close();
 		}
 
 	}

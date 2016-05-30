@@ -2,6 +2,7 @@ package com.traceyourfriend.inventory;
 
 import com.google.gson.Gson;
 import com.pusher.rest.Pusher;
+import com.traceyourfriend.beans.Message;
 import com.traceyourfriend.beans.User;
 import com.traceyourfriend.dao.UsersDAO;
 import com.traceyourfriend.utils.Coordinate;
@@ -155,20 +156,19 @@ public class Inventory {
 	@Path("invite")
 	public String inviteAmi(String message) throws SQLException{
 		HashUser h = HashUser.getInstance();
-		String name = new Gson().fromJson("name", String.class);
-		String nameAmi = new Gson().fromJson("nameAmi", String.class);
-		User user = h.searchHash(name);
-		User userAmi = h.searchHash(nameAmi);
+		Message m = new Gson().fromJson(message, Message.class);
+		User user = h.searchHash(m.getName());
+		User userAmi = h.searchHash(m.getNameAmi());
 		if (!user.estAmi(userAmi.getName()) && !userAmi.aDemande(user.getName())){
 			/*Si un utilisateur invite un autre utilisateur qui de son côté a aussi fait la demande auparavant, alors ils deviennent amis sans demande de confirmation*/
-			if(user.aDemande(nameAmi)){
-				user.removeDemandeAmi(nameAmi);
-				userAmi.removeInvitation(name);
-				user.addAmi(nameAmi);
-				userAmi.addAmi(name);
+			if(user.aDemande(userAmi.getName())){
+				user.removeDemandeAmi(userAmi.getName());
+				userAmi.removeInvitation(user.getName());
+				user.addAmi(userAmi.getName());
+				userAmi.addAmi(user.getName());
 			} else{
-				userAmi.addDemandeAmi(name);
-				user.addInvitation(nameAmi);
+				userAmi.addDemandeAmi(user.getName());
+				user.addInvitation(userAmi.getName());
 			}
 			return "200";
 		}
@@ -188,17 +188,15 @@ public class Inventory {
 	@Path("request")
 	public String requestAmi(String message) throws SQLException{
 		HashUser h = HashUser.getInstance();
-		User u = new Gson().fromJson("name", User.class);
-		User uAmi = new Gson().fromJson("nameAmi", User.class);
-		Boolean reponse = new Gson().fromJson("bool", Boolean.class);
-		User user = h.searchHash(u.getMail());
-		User userAmi = h.searchHash(uAmi.getMail());
+		Message m = new Gson().fromJson(message, Message.class);
+		User user = h.searchHash(m.getName());
+		User userAmi = h.searchHash(m.getNameAmi());
 		if (user.aDemande(userAmi.getName())){
 			dao.deleteRequest(user, userAmi);
 			dao.deleteInvitation(userAmi, user);
 			user.removeDemandeAmi(userAmi.getName());
 			userAmi.removeInvitation(user.getName());
-			if (reponse){
+			if (m.isBool()){
 				dao.acceptFriend(user, userAmi);
 				user.addAmi(userAmi.getName());
 				userAmi.addAmi(user.getName());
@@ -221,11 +219,11 @@ public class Inventory {
 	@POST
 	@Path("delete")
 	public String deleteAmi(String message) throws SQLException{
+		System.out.println("tototo");
 		HashUser h = HashUser.getInstance();
-		User u = new Gson().fromJson("name", User.class);
-		User uAmi = new Gson().fromJson("nameAmi", User.class);
-		User user = h.searchHash(u.getMail());
-		User userAmi = h.searchHash(uAmi.getMail());
+		Message m = new Gson().fromJson(message, Message.class);
+		User user = h.searchHash(m.getName());
+		User userAmi = h.searchHash(m.getNameAmi());
 		if (user.estAmi(userAmi.getName())){
 			dao.deleteFriend(user, userAmi);
 			user.removeAmi(userAmi.getName());
