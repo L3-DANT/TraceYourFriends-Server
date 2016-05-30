@@ -202,8 +202,6 @@ public class UsersDAO implements DAO{
 		}
 	}
 
-
-
 	@Override
 	public void deleteRequest(User user, User request) throws SQLException{
 		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_REQUEST)) {
@@ -220,10 +218,8 @@ public class UsersDAO implements DAO{
 		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_INVITATION)) {
 			preparedStatement.setLong(1, user.getId());
 			preparedStatement.setLong(2, invitation.getId());
-			try(ResultSet resultSet = preparedStatement.executeQuery()) {
-				preparedStatement.close();
-				resultSet.close();
-			}
+			preparedStatement.executeUpdate() ;
+			preparedStatement.close();
 		}
 	}
 
