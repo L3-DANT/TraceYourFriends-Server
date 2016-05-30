@@ -5,7 +5,7 @@ import com.traceyourfriend.beans.User;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface DAO <T>{
+public interface DAO <T> {
 
     int add(User user) throws SQLException;
 
@@ -18,4 +18,12 @@ public interface DAO <T>{
     List<String> loadRequests(User user) throws SQLException;
 
     List<String> loadInvitations(User user) throws SQLException;
+
+    void deleteFriend(User current ,User friend) throws SQLException;
+
+    void deleteRequest(User current, User request) throws SQLException;
+
+    void deleteInvitation(User current, User invitation) throws SQLException;
+
+    void acceptFriend(User user, User friend) throws SQLException;
 }
