@@ -12,7 +12,8 @@ public class PusherSingleton {
     private static final PusherSingleton INSTANCE = new PusherSingleton();
 
     private PusherSingleton(){
-
+        pusher.setCluster("eu");
+        pusher.setEncrypted(true);
     }
 
     public static PusherSingleton getInstance(){return INSTANCE;}

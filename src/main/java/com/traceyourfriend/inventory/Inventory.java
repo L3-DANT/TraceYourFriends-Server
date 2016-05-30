@@ -57,7 +57,6 @@ public class Inventory {
 	@POST
 	@Path("coord")
 	public String Coor(String message) throws SQLException {
-        System.out.println("recu");
 		Coordinate coordinate = new Gson().fromJson(message, Coordinate.class);
 
 		HashUser h = HashUser.getInstance();
@@ -67,9 +66,12 @@ public class Inventory {
 		}
 		u.setCoorX(coordinate.getCoorX());
 		u.setCoorY(coordinate.getCoorY());
-		//Pusher pusher = PusherSingleton.getInstance().GetPusher();
-		//pusher.trigger(u.getName(), "coorX", coordinate.getCoorX());
-		//pusher.trigger(u.getName(), "coorY", coordinate.getCoorY());
+		Pusher pusher = PusherSingleton.getInstance().GetPusher();
+
+		for (String ami: u.getAmis()) {
+			pusher.trigger(ami, "coorX/coorY", coordinate.getName() + "/" +
+					coordinate.getCoorX() + "/" + coordinate.getCoorY());
+		}
 		return new Gson().toJson(u.getDemandesAmi());
 	}
 
