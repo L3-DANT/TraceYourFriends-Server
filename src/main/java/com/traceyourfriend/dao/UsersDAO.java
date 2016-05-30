@@ -143,6 +143,7 @@ public class UsersDAO implements DAO{
 			preparedStatement.setLong(1, user.getId());
 			try(ResultSet resultSet = preparedStatement.executeQuery()) {
 				while (resultSet.next()) {
+					user.addAmi(user.getName());
 					user.addAmi(resultSet.getString(1));
 					}
 				preparedStatement.close();
@@ -158,6 +159,7 @@ public class UsersDAO implements DAO{
 			preparedStatement.setLong(1, user.getId());
 			try(ResultSet resultSet = preparedStatement.executeQuery()) {
 				while (resultSet.next()) {
+					user.addDemandeAmi(user.getName());
 					user.addDemandeAmi(resultSet.getString(1));
 				}
 				preparedStatement.close();
@@ -173,6 +175,7 @@ public class UsersDAO implements DAO{
 			preparedStatement.setLong(1, user.getId());
 			try(ResultSet resultSet = preparedStatement.executeQuery()) {
 				while (resultSet.next()) {
+					user.addInvitation(user.getName());
 					user.addInvitation(resultSet.getString(1));
 				}
 				preparedStatement.close();
