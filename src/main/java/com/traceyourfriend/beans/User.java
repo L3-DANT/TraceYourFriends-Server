@@ -115,7 +115,7 @@ public class User implements Comparable<User> {
 
     public boolean removeDemandeAmi(String demandeAmi){return this.demandesAmi.remove(demandeAmi);}
 
-    public ArrayList<String> getInvitaitons(){return this.invitations;}
+    public ArrayList<String> getInvitations(){return this.invitations;}
 
     public void setInvitations(ArrayList<String> invitations){this.invitations = invitations;}
 

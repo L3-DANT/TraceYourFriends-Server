@@ -26,7 +26,10 @@ public class UsersDAO implements DAO{
     private static final String SQL_SELECT_USER = "SELECT * FROM users";
 	private static final String SQL_SELECT_FRIENDS = "SELECT DISTINCT u.name FROM users u, amis a WHERE a.ID_USER1=? AND a.ID_USER2=u.id";
 	private static final String SQL_SELECT_REQUESTS = "SELECT DISTINCT u.name FROM users u, demandes d WHERE d.ID_USER1=? AND d.ID_USER2=u.id";
-	private static final String SQL_SELECT_INVITATIONS = "SELECT DISTINCT u.name FROM users u, invitations i WHERE i.ID_USER1=? AND i.ID_USER2=u.id";
+	private static final String SQL_SELECT_INVITATIONS = "SELECT DISTINCT u.name FROM users u, invitation i WHERE i.ID_USER1=? AND i.ID_USER2=u.id";
+	private static final String SQL_DELETE_FRIEND = "DELETE FROM amis WHERE (ID_USER1=? AND ID_USER2=?) OR (ID_USER1=? AND ID_USER2=?)";
+	private static final String SQL_DELETE_REQUEST = "DELETE FROM demandes WHERE ID_USER1=? AND ID_USER2=?";
+	private static final String SQL_DELETE_INVITATION = "DELETE FROM invitation WHERE ID_USER1=? AND ID_USER2=?";
 
     private final Connection connection = SQLConnection.getSQLCon().getDbCon();
 
@@ -182,6 +185,48 @@ public class UsersDAO implements DAO{
 				resultSet.close();
 			}
 		}
-		return user.getInvitaitons();
+		return user.getInvitations();
+	}
+
+	@Override
+	public void deleteFriend(User user, User friend) throws SQLException{
+
+		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_FRIEND)) {
+			preparedStatement.setLong(1, user.getId());
+			preparedStatement.setLong(2, friend.getId());
+			preparedStatement.setLong(3, friend.getId());
+			preparedStatement.setLong(4, user.getId());
+			try(ResultSet resultSet = preparedStatement.executeQuery()) {
+				preparedStatement.close();
+				resultSet.close();
+			}
+		}
+	}
+
+
+
+	@Override
+	public void deleteRequest(User user, User request) throws SQLException{
+		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_REQUEST)) {
+			preparedStatement.setLong(1, user.getId());
+			preparedStatement.setLong(2, request.getId());
+			try(ResultSet resultSet = preparedStatement.executeQuery()) {
+				preparedStatement.close();
+				resultSet.close();
+			}
+		}
+
+	}
+
+	@Override
+	public void deleteInvitation(User user, User invitation) throws SQLException{
+		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_INVITATION)) {
+			preparedStatement.setLong(1, user.getId());
+			preparedStatement.setLong(2, invitation.getId());
+			try(ResultSet resultSet = preparedStatement.executeQuery()) {
+				preparedStatement.close();
+				resultSet.close();
+			}
+		}
 	}
 }

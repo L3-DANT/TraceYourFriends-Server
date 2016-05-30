@@ -57,7 +57,6 @@ public class Inventory {
 	@POST
 	@Path("coord")
 	public String Coor(String message) throws SQLException {
-        System.out.println("recu");
 		Coordinate coordinate = new Gson().fromJson(message, Coordinate.class);
 
 		HashUser h = HashUser.getInstance();
@@ -67,9 +66,8 @@ public class Inventory {
 		}
 		u.setCoorX(coordinate.getCoorX());
 		u.setCoorY(coordinate.getCoorY());
-		//Pusher pusher = PusherSingleton.getInstance().GetPusher();
-		//pusher.trigger(u.getName(), "coorX", coordinate.getCoorX());
-		//pusher.trigger(u.getName(), "coorY", coordinate.getCoorY());
+		Pusher pusher = PusherSingleton.getInstance().GetPusher();
+		pusher.trigger(u.getName(), "coorX/coorY", coordinate.getCoorX() + "/" + coordinate.getCoorY());
 		return new Gson().toJson(u.getDemandesAmi());
 	}
 
@@ -192,6 +190,8 @@ public class Inventory {
 		User user = h.searchHash(name);
 		User userAmi = h.searchHash(nameAmi);
 		if (user.aDemande(nameAmi)){
+			dao.deleteRequest(user, userAmi);
+			dao.deleteInvitation(userAmi, user);
 			user.removeDemandeAmi(nameAmi);
 			userAmi.removeInvitation(name);
 			if (reponse){
@@ -222,6 +222,7 @@ public class Inventory {
 		User user = h.searchHash(name);
 		User userAmi = h.searchHash(nameAmi);
 		if (user.estAmi(nameAmi)){
+			dao.deleteFriend(user, userAmi);
 			user.removeAmi(nameAmi);
 			userAmi.removeAmi(name);
 			return "200";
