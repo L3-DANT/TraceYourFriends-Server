@@ -31,7 +31,7 @@ public class UsersDAO implements DAO{
 	private static final String SQL_DELETE_REQUEST = "DELETE FROM demandes WHERE ID_USER1=? AND ID_USER2=?";
 	private static final String SQL_DELETE_INVITATION = "DELETE FROM invitation WHERE ID_USER1=? AND ID_USER2=?";
 	private static final String SQL_INSERT_FRIEND = "INSERT INTO amis (ID_USER1, ID_USER2) VALUES (?, ?), (?, ?)";
-	private static final String SQL_SEARCH = "SELECT u.name FROM users u WHERE u.name like ?";
+	private static final String SQL_SEARCH = "SELECT u.name FROM users u WHERE UPPER(u.name) like UPPER(?)";
 
 
     private final Connection connection = SQLConnection.getSQLCon().getDbCon();
@@ -195,45 +195,62 @@ public class UsersDAO implements DAO{
 	public void deleteFriend(User user, User friend) throws SQLException{
 
 		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_FRIEND)) {
+			connection.setAutoCommit(false);
 			preparedStatement.setLong(1, user.getId());
 			preparedStatement.setLong(2, friend.getId());
 			preparedStatement.setLong(3, friend.getId());
 			preparedStatement.setLong(4, user.getId());
 			preparedStatement.executeUpdate();
 			preparedStatement.close();
+			connection.commit();
+		} catch (SQLException e ) {
+			connection.rollback();
 		}
 	}
 
 	@Override
 	public void deleteRequest(User user, User request) throws SQLException{
 		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_REQUEST)) {
+			connection.setAutoCommit(false);
 			preparedStatement.setLong(1, user.getId());
 			preparedStatement.setLong(2, request.getId());
 			preparedStatement.executeUpdate();
+			connection.commit();
 			preparedStatement.close();
+		} catch (SQLException e ) {
+			connection.rollback();
 		}
 
 	}
 
 	@Override
 	public void deleteInvitation(User user, User invitation) throws SQLException{
+
 		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_INVITATION)) {
+			connection.setAutoCommit(false);
 			preparedStatement.setLong(1, user.getId());
 			preparedStatement.setLong(2, invitation.getId());
 			preparedStatement.executeUpdate() ;
+			connection.commit();
 			preparedStatement.close();
+		} catch (SQLException e ) {
+			connection.rollback();
 		}
 	}
 
 	@Override
 	public void acceptFriend(User user, User friend) throws SQLException{
 		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_FRIEND)) {
+			connection.setAutoCommit(false);
 			preparedStatement.setLong(1, user.getId());
 			preparedStatement.setLong(2, friend.getId());
 			preparedStatement.setLong(3, friend.getId());
 			preparedStatement.setLong(4, user.getId());
 			preparedStatement.executeUpdate() ;
+			connection.commit();
 			preparedStatement.close();
+		} catch (SQLException e ) {
+			connection.rollback();
 		}
 	}
 
