@@ -7,12 +7,11 @@ import com.pusher.rest.Pusher;
  */
 public class PusherSingleton {
 
-    private final Pusher pusher = new Pusher("197476","37c3b876be2d4696857a","8a50d3125ff5b6d81d3f");
+    private final Pusher pusher = new Pusher("211950","e19d3311d6540da19604","8f510258822fd44e44b0");
 
     private static final PusherSingleton INSTANCE = new PusherSingleton();
 
     private PusherSingleton(){
-        pusher.setCluster("eu");
         pusher.setEncrypted(true);
     }
 
