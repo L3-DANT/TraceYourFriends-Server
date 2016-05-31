@@ -67,7 +67,6 @@ public class HashUser {
                 dao.loadInvitations(user);
             }
         }
-
         return contactInSearch;
     }
 }

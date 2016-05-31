@@ -31,7 +31,7 @@ public class UsersDAO implements DAO{
 	private static final String SQL_DELETE_REQUEST = "DELETE FROM demandes WHERE ID_USER1=? AND ID_USER2=?";
 	private static final String SQL_DELETE_INVITATION = "DELETE FROM invitation WHERE ID_USER1=? AND ID_USER2=?";
 	private static final String SQL_INSERT_FRIEND = "INSERT INTO amis (ID_USER1, ID_USER2) VALUES (?, ?), (?, ?)";
-	private static final String SQL_SEARCH = "SELECT u.name FROM users u WHERE u.name = ?";
+	private static final String SQL_SEARCH = "SELECT u.name FROM users u WHERE u.name like ?";
 
 
     private final Connection connection = SQLConnection.getSQLCon().getDbCon();
@@ -241,7 +241,7 @@ public class UsersDAO implements DAO{
 	public List<String> loadPoeple(String str) throws SQLException {
 		List<String> poeple = new ArrayList<>();
 		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_SEARCH)) {
-			preparedStatement.setString(1, "%" + str + "%");
+			preparedStatement.setString(1, '%' + str + '%');
 			try(ResultSet resultSet = preparedStatement.executeQuery()) {
 				while (resultSet.next()) {
 					poeple.add(resultSet.getString(1));
