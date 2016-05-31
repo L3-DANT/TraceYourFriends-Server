@@ -32,6 +32,8 @@ public class UsersDAO implements DAO{
 	private static final String SQL_DELETE_INVITATION = "DELETE FROM invitation WHERE ID_USER1=? AND ID_USER2=?";
 	private static final String SQL_INSERT_FRIEND = "INSERT INTO amis (ID_USER1, ID_USER2) VALUES (?, ?), (?, ?)";
 	private static final String SQL_SEARCH = "SELECT u.name FROM users u WHERE UPPER(u.name) like UPPER(?)";
+	private static final String SQL_INSERT_DEMANDE = "INSERT INTO demandes (ID_USER1, ID_USER2) VALUES (?, ?)";
+	private static final String SQL_INSERT_INVITATION = "INSERT INTO invitation (ID_USER1, ID_USER2) VALUES (?, ?)";
 
 
     private final Connection connection = SQLConnection.getSQLCon().getDbCon();
@@ -240,7 +242,10 @@ public class UsersDAO implements DAO{
 
 	@Override
 	public void acceptFriend(User user, User friend) throws SQLException{
-		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_FRIEND)) {
+		try {
+			this.deleteRequest(user, friend);
+			this.deleteInvitation(friend, user);
+			PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_FRIEND);
 			connection.setAutoCommit(false);
 			preparedStatement.setLong(1, user.getId());
 			preparedStatement.setLong(2, friend.getId());
@@ -268,5 +273,30 @@ public class UsersDAO implements DAO{
 			}
 		}
 		return poeple;
+	}
+
+	@Override
+	public void invitUser (User user, User invit) throws SQLException{
+
+		try{
+			PreparedStatement preparedStatement1 = connection.prepareStatement(SQL_INSERT_DEMANDE);
+			connection.setAutoCommit(false);
+			preparedStatement1.setLong(1, invit.getId());
+			preparedStatement1.setLong(2, user.getId());
+			preparedStatement1.executeUpdate() ;
+			connection.commit();
+			preparedStatement1.close();
+
+			PreparedStatement preparedStatement2 = connection.prepareStatement(SQL_INSERT_INVITATION);
+			connection.setAutoCommit(false);
+			preparedStatement2.setLong(1, user.getId());
+			preparedStatement2.setLong(2, invit.getId());
+			preparedStatement2.executeUpdate() ;
+			connection.commit();
+			preparedStatement2.close();
+
+		} catch (SQLException e ) {
+			connection.rollback();
+		}
 	}
 }

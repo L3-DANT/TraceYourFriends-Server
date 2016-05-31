@@ -162,11 +162,13 @@ public class Inventory {
 		if (!user.estAmi(userAmi.getName()) && !userAmi.aDemande(user.getName())){
 			/*Si un utilisateur invite un autre utilisateur qui de son côté a aussi fait la demande auparavant, alors ils deviennent amis sans demande de confirmation*/
 			if(user.aDemande(userAmi.getName())){
+				dao.acceptFriend(user, userAmi);
 				user.removeDemandeAmi(userAmi.getName());
 				userAmi.removeInvitation(user.getName());
 				user.addAmi(userAmi.getName());
 				userAmi.addAmi(user.getName());
 			} else{
+				dao.invitUser(user, userAmi);
 				userAmi.addDemandeAmi(user.getName());
 				user.addInvitation(userAmi.getName());
 			}
@@ -192,15 +194,16 @@ public class Inventory {
 		User user = h.searchHash(m.getName());
 		User userAmi = h.searchHash(m.getNameAmi());
 		if (user.aDemande(userAmi.getName())){
-			dao.deleteRequest(user, userAmi);
-			dao.deleteInvitation(userAmi, user);
-			user.removeDemandeAmi(userAmi.getName());
-			userAmi.removeInvitation(user.getName());
-			if (m.isBool()){
+			if (!m.isBool()){
+				dao.deleteRequest(user, userAmi);
+				dao.deleteInvitation(userAmi, user);
+			}else{
 				dao.acceptFriend(user, userAmi);
 				user.addAmi(userAmi.getName());
 				userAmi.addAmi(user.getName());
 			}
+			user.removeDemandeAmi(userAmi.getName());
+			userAmi.removeInvitation(user.getName());
 			return "200";
 		}
 		return "500";

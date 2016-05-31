@@ -28,4 +28,6 @@ public interface DAO <T> {
     void acceptFriend(User user, User friend) throws SQLException;
 
     List<String> loadPoeple(String str) throws SQLException;
+
+    void invitUser (User user, User invit) throws SQLException;
 }
