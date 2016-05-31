@@ -12,6 +12,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -70,8 +71,8 @@ public class Inventory {
 		Pusher pusher = PusherSingleton.getInstance().GetPusher();
 
 		for (String ami: u.getAmis()) {
-			pusher.trigger(ami, "coorX/coorY", coordinate.getName() + "/" +
-					coordinate.getCoorX() + "/" + coordinate.getCoorY());
+			pusher.trigger(ami, "coorX/coorY", Collections.singletonMap("data",coordinate.getName() + "/" +
+					coordinate.getCoorX() + "/" + coordinate.getCoorY()));
 		}
 		return new Gson().toJson(u.getDemandesAmi());
 	}

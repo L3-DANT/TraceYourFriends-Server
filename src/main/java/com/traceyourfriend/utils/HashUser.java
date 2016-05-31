@@ -50,21 +50,13 @@ public class HashUser {
 
     public ArrayList<String> searchListContacts(String recherche) throws SQLException {
         ArrayList<String> contactInSearch = new ArrayList<>();
-        for (Map.Entry<String, User> e : usersName.entrySet()) {
-            if (e.getKey().startsWith(recherche)) {
-                contactInSearch.add(e.getValue().getName());
-            }
-        }
         List<String> poeple = dao.loadPoeple(recherche);
 
         for (String p: poeple) {
             User user = dao.search(p);
             if (user != null) {
-                usersMail.put(user.getMail(), user);
-                usersName.put(user.getName(), user);
-                dao.loadFriends(user);
-                dao.loadRequests(user);
-                dao.loadInvitations(user);
+                searchHash(user.getName());
+                contactInSearch.add(user.getName());
             }
         }
         return contactInSearch;
