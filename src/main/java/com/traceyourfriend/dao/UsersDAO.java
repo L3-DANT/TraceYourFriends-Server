@@ -166,7 +166,6 @@ public class UsersDAO implements DAO{
 		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_REQUESTS)) {
 			preparedStatement.setLong(1, user.getId());
 			try(ResultSet resultSet = preparedStatement.executeQuery()) {
-				user.addDemandeAmi(user.getName());
 				while (resultSet.next()) {
 					user.addDemandeAmi(resultSet.getString(1));
 				}
@@ -182,7 +181,6 @@ public class UsersDAO implements DAO{
 		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_INVITATIONS)) {
 			preparedStatement.setLong(1, user.getId());
 			try(ResultSet resultSet = preparedStatement.executeQuery()) {
-				user.addInvitation(user.getName());
 				while (resultSet.next()) {
 					user.addInvitation(resultSet.getString(1));
 				}
@@ -284,15 +282,13 @@ public class UsersDAO implements DAO{
 			preparedStatement1.setLong(1, invit.getId());
 			preparedStatement1.setLong(2, user.getId());
 			preparedStatement1.executeUpdate() ;
-			connection.commit();
-			preparedStatement1.close();
 
 			PreparedStatement preparedStatement2 = connection.prepareStatement(SQL_INSERT_INVITATION);
-			connection.setAutoCommit(false);
 			preparedStatement2.setLong(1, user.getId());
 			preparedStatement2.setLong(2, invit.getId());
 			preparedStatement2.executeUpdate() ;
 			connection.commit();
+			preparedStatement1.close();
 			preparedStatement2.close();
 
 		} catch (SQLException e ) {
