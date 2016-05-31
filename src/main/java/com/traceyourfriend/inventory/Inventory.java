@@ -12,6 +12,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -70,8 +71,8 @@ public class Inventory {
 		Pusher pusher = PusherSingleton.getInstance().GetPusher();
 
 		for (String ami: u.getAmis()) {
-			pusher.trigger(ami, "coorX/coorY", coordinate.getName() + "/" +
-					coordinate.getCoorX() + "/" + coordinate.getCoorY());
+			pusher.trigger(ami, "coorX/coorY", Collections.singletonMap("data",coordinate.getName() + "/" +
+					coordinate.getCoorX() + "/" + coordinate.getCoorY()));
 		}
 		return new Gson().toJson(u.getDemandesAmi());
 	}
@@ -135,9 +136,9 @@ public class Inventory {
 	 */
 	@POST
 	@Path("search/contact")
-	public String rechercheContact(String recherche){
+	public String rechercheContact(String recherche) throws SQLException{
 		HashUser h = HashUser.getInstance();
-		ArrayList<String> listContact = h.searchListContacts(new Gson().fromJson(recherche, String.class));
+		ArrayList<String> listContact = h.searchListContacts(new Gson().fromJson(recherche, User.class).getMail());
 
 		return new Gson().toJson(listContact.toString());
 	}
@@ -162,11 +163,13 @@ public class Inventory {
 		if (!user.estAmi(userAmi.getName()) && !userAmi.aDemande(user.getName())){
 			/*Si un utilisateur invite un autre utilisateur qui de son côté a aussi fait la demande auparavant, alors ils deviennent amis sans demande de confirmation*/
 			if(user.aDemande(userAmi.getName())){
+				dao.acceptFriend(user, userAmi);
 				user.removeDemandeAmi(userAmi.getName());
 				userAmi.removeInvitation(user.getName());
 				user.addAmi(userAmi.getName());
 				userAmi.addAmi(user.getName());
 			} else{
+				dao.invitUser(user, userAmi);
 				userAmi.addDemandeAmi(user.getName());
 				user.addInvitation(userAmi.getName());
 			}
@@ -192,15 +195,16 @@ public class Inventory {
 		User user = h.searchHash(m.getName());
 		User userAmi = h.searchHash(m.getNameAmi());
 		if (user.aDemande(userAmi.getName())){
-			dao.deleteRequest(user, userAmi);
-			dao.deleteInvitation(userAmi, user);
-			user.removeDemandeAmi(userAmi.getName());
-			userAmi.removeInvitation(user.getName());
-			if (m.isBool()){
+			if (!m.isBool()){
+				dao.deleteRequest(user, userAmi);
+				dao.deleteInvitation(userAmi, user);
+			}else{
 				dao.acceptFriend(user, userAmi);
 				user.addAmi(userAmi.getName());
 				userAmi.addAmi(user.getName());
 			}
+			user.removeDemandeAmi(userAmi.getName());
+			userAmi.removeInvitation(user.getName());
 			return "200";
 		}
 		return "500";

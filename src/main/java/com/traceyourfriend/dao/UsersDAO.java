@@ -31,6 +31,10 @@ public class UsersDAO implements DAO{
 	private static final String SQL_DELETE_REQUEST = "DELETE FROM demandes WHERE ID_USER1=? AND ID_USER2=?";
 	private static final String SQL_DELETE_INVITATION = "DELETE FROM invitation WHERE ID_USER1=? AND ID_USER2=?";
 	private static final String SQL_INSERT_FRIEND = "INSERT INTO amis (ID_USER1, ID_USER2) VALUES (?, ?), (?, ?)";
+	private static final String SQL_SEARCH = "SELECT u.name FROM users u WHERE UPPER(u.name) like UPPER(?)";
+	private static final String SQL_INSERT_DEMANDE = "INSERT INTO demandes (ID_USER1, ID_USER2) VALUES (?, ?)";
+	private static final String SQL_INSERT_INVITATION = "INSERT INTO invitation (ID_USER1, ID_USER2) VALUES (?, ?)";
+
 
     private final Connection connection = SQLConnection.getSQLCon().getDbCon();
 
@@ -162,7 +166,6 @@ public class UsersDAO implements DAO{
 		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_REQUESTS)) {
 			preparedStatement.setLong(1, user.getId());
 			try(ResultSet resultSet = preparedStatement.executeQuery()) {
-				user.addDemandeAmi(user.getName());
 				while (resultSet.next()) {
 					user.addDemandeAmi(resultSet.getString(1));
 				}
@@ -178,7 +181,6 @@ public class UsersDAO implements DAO{
 		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_INVITATIONS)) {
 			preparedStatement.setLong(1, user.getId());
 			try(ResultSet resultSet = preparedStatement.executeQuery()) {
-				user.addInvitation(user.getName());
 				while (resultSet.next()) {
 					user.addInvitation(resultSet.getString(1));
 				}
@@ -193,51 +195,104 @@ public class UsersDAO implements DAO{
 	public void deleteFriend(User user, User friend) throws SQLException{
 
 		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_FRIEND)) {
+			connection.setAutoCommit(false);
 			preparedStatement.setLong(1, user.getId());
 			preparedStatement.setLong(2, friend.getId());
 			preparedStatement.setLong(3, friend.getId());
 			preparedStatement.setLong(4, user.getId());
 			preparedStatement.executeUpdate();
 			preparedStatement.close();
+			connection.commit();
+		} catch (SQLException e ) {
+			connection.rollback();
 		}
 	}
-
-
 
 	@Override
 	public void deleteRequest(User user, User request) throws SQLException{
 		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_REQUEST)) {
+			connection.setAutoCommit(false);
 			preparedStatement.setLong(1, user.getId());
 			preparedStatement.setLong(2, request.getId());
 			preparedStatement.executeUpdate();
+			connection.commit();
 			preparedStatement.close();
+		} catch (SQLException e ) {
+			connection.rollback();
 		}
 
 	}
 
 	@Override
 	public void deleteInvitation(User user, User invitation) throws SQLException{
+
 		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_INVITATION)) {
+			connection.setAutoCommit(false);
 			preparedStatement.setLong(1, user.getId());
 			preparedStatement.setLong(2, invitation.getId());
-			try(ResultSet resultSet = preparedStatement.executeQuery()) {
-				preparedStatement.close();
-				resultSet.close();
-			}
+			preparedStatement.executeUpdate() ;
+			connection.commit();
+			preparedStatement.close();
+		} catch (SQLException e ) {
+			connection.rollback();
 		}
 	}
 
 	@Override
 	public void acceptFriend(User user, User friend) throws SQLException{
-		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_FRIEND)) {
+		try {
+			this.deleteRequest(user, friend);
+			this.deleteInvitation(friend, user);
+			PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_FRIEND);
+			connection.setAutoCommit(false);
 			preparedStatement.setLong(1, user.getId());
 			preparedStatement.setLong(2, friend.getId());
 			preparedStatement.setLong(3, friend.getId());
 			preparedStatement.setLong(4, user.getId());
+			preparedStatement.executeUpdate() ;
+			connection.commit();
+			preparedStatement.close();
+		} catch (SQLException e ) {
+			connection.rollback();
+		}
+	}
+
+	@Override
+	public List<String> loadPoeple(String str) throws SQLException {
+		List<String> poeple = new ArrayList<>();
+		try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_SEARCH)) {
+			preparedStatement.setString(1, '%' + str + '%');
 			try(ResultSet resultSet = preparedStatement.executeQuery()) {
+				while (resultSet.next()) {
+					poeple.add(resultSet.getString(1));
+				}
 				preparedStatement.close();
 				resultSet.close();
 			}
+		}
+		return poeple;
+	}
+
+	@Override
+	public void invitUser (User user, User invit) throws SQLException{
+
+		try{
+			PreparedStatement preparedStatement1 = connection.prepareStatement(SQL_INSERT_DEMANDE);
+			connection.setAutoCommit(false);
+			preparedStatement1.setLong(1, invit.getId());
+			preparedStatement1.setLong(2, user.getId());
+			preparedStatement1.executeUpdate() ;
+
+			PreparedStatement preparedStatement2 = connection.prepareStatement(SQL_INSERT_INVITATION);
+			preparedStatement2.setLong(1, user.getId());
+			preparedStatement2.setLong(2, invit.getId());
+			preparedStatement2.executeUpdate() ;
+			connection.commit();
+			preparedStatement1.close();
+			preparedStatement2.close();
+
+		} catch (SQLException e ) {
+			connection.rollback();
 		}
 	}
 }

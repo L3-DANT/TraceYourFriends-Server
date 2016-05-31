@@ -7,6 +7,7 @@ import com.traceyourfriend.dao.UsersDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -38,8 +39,8 @@ public class HashUser {
         }
         user = dao.search(emailOrName);
         if (user != null) {
-            usersMail.put(emailOrName, user);
-            usersName.put(emailOrName, user);
+            usersMail.put(user.getMail(), user);
+            usersName.put(user.getName(), user);
             dao.loadFriends(user);
             dao.loadRequests(user);
             dao.loadInvitations(user);
@@ -47,11 +48,15 @@ public class HashUser {
         return user;
     }
 
-    public ArrayList<String> searchListContacts(String recherche){
+    public ArrayList<String> searchListContacts(String recherche) throws SQLException {
         ArrayList<String> contactInSearch = new ArrayList<>();
-        for (Map.Entry<String, User> e : usersName.entrySet()) {
-            if (e.getKey().startsWith(recherche)) {
-                contactInSearch.add(e.getValue().getName());
+        List<String> poeple = dao.loadPoeple(recherche);
+
+        for (String p: poeple) {
+            User user = dao.search(p);
+            if (user != null) {
+                searchHash(user.getName());
+                contactInSearch.add(user.getName());
             }
         }
         return contactInSearch;
